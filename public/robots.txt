@@ -1,0 +1,3 @@
+# Internal sales tool. Not for public indexing.
+User-agent: *
+Disallow: /
