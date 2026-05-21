@@ -1,0 +1,44 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0a0b0f; }
+
+/* Responsive overrides — the calculator uses inline styles, so we use
+   !important here to win specificity below the 768px breakpoint. */
+@media (max-width: 768px) {
+  .calc-layout {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+  .calc-inputs {
+    border-right: none !important;
+    border-bottom: 1px solid #1e1f2e !important;
+    max-height: none !important;
+  }
+  .calc-header {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 14px 18px !important;
+  }
+  .calc-header-controls {
+    width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+  .calc-grid-2,
+  .calc-grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+  .calc-scenarios-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .calc-metrics-row {
+    grid-template-columns: 1fr !important;
+  }
+  .calc-content {
+    padding: 16px !important;
+  }
+  /* Heatmap strip: drop the chart-alignment padding on mobile so cells stay
+     readable; keep cells slightly taller to fit numbers. */
+  .calc-heatmap-strip {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
