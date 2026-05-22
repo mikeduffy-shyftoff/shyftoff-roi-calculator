@@ -673,7 +673,7 @@ export default function Calculator() {
                 // (value − min) / (max − min) gives the thumb's fractional
                 // position along the track. The -14px nudge centers the
                 // label over the thumb (label is ~28px wide for 2-digit %).
-                left: `calc(${((inputs.maxOccupancy - 50) / 45) * 100}% - 14px)`,
+                left: `calc(${((inputs.maxOccupancy - 1) / 98) * 100}% - 14px)`,
                 fontSize: 12, fontWeight: 700, color: "#a855f7",
                 fontFamily: "Space Mono, monospace",
                 transition: "left 80ms linear",
@@ -682,7 +682,7 @@ export default function Calculator() {
                 {inputs.maxOccupancy}%
               </span>
             </div>
-            <Slider value={inputs.maxOccupancy} onChange={(v) => set("maxOccupancy", v)} min={50} max={95} />
+            <Slider value={inputs.maxOccupancy} onChange={(v) => set("maxOccupancy", v)} min={1} max={99} />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
               <span style={{ fontSize: 10, color: results.slWarning ? "#f59e0b" : "#22c55e" }}>
                 achieved SL: {Math.round(results.achievedSL * 100)}%
