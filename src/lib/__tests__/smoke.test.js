@@ -372,10 +372,10 @@ describe("scenarios — granular cost model (full App.jsx parity)", () => {
 });
 
 describe("presets — TIER_PRESETS", () => {
-  it("has lean, standard, premium keys", () => {
+  it("has lean, standard, humanlike keys", () => {
     expect(Object.keys(TIER_PRESETS).sort()).toEqual([
+      "humanlike",
       "lean",
-      "premium",
       "standard",
     ]);
   });

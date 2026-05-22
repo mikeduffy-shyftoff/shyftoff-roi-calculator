@@ -852,7 +852,7 @@ export default function Calculator() {
                   textAlign: "center", transition: "all 0.15s",
                 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: active ? preset.color : "#4a4855", lineHeight: 1.2 }}>
-                    {key === "lean" ? "Lean" : key === "standard" ? "Standard" : "Human-like"}
+                    {key === "lean" ? "Lean" : key === "standard" ? "Standard" : key === "humanlike" ? "Human-like" : key}
                   </div>
                   <div style={{ fontSize: 9, color: active ? "#8a8891" : "#3a3845", marginTop: 2 }}>{preset.range}/min</div>
                 </button>

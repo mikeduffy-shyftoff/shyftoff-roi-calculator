@@ -35,7 +35,7 @@ export const TIER_PRESETS = {
       aiFailureBuffer: 5,
     },
   },
-  premium: {
+  humanlike: {
     label: "Human-like",
     range: "$0.18 – $0.35",
     color: "#ef4444",
