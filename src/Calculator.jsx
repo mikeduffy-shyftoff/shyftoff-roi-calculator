@@ -570,24 +570,6 @@ export default function Calculator() {
           </div>
         </div>
         <div className="calc-header-controls" style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 11, color: "#6b6878", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-              Arrival pattern
-            </span>
-            <select
-              value={arrivalKey}
-              onChange={(e) => setArrivalKey(e.target.value)}
-              style={{
-                background: "#13141a", border: "1px solid #2a2b3d", color: "#e2e0e7",
-                borderRadius: 6, padding: "6px 10px", fontSize: 12,
-                fontFamily: "'DM Sans', sans-serif", cursor: "pointer", outline: "none",
-              }}
-            >
-              {Object.entries(ARRIVAL_PRESETS).map(([key, p]) => (
-                <option key={key} value={key}>{p.label} — {p.hint}</option>
-              ))}
-            </select>
-          </div>
           <button
             onClick={() => setShowAI(!showAI)}
             style={{
@@ -640,6 +622,21 @@ export default function Calculator() {
                 <div style={{ fontSize: 9, color: "#3a3b4d", marginTop: 3 }}>training · PTO · sick</div>
               </div>
             </div>
+          </InputRow>
+          <InputRow label="Intraday Arrival Pattern" hint={ARRIVAL_PRESETS[arrivalKey].hint}>
+            <select
+              value={arrivalKey}
+              onChange={(e) => setArrivalKey(e.target.value)}
+              style={{
+                width: "100%", background: "#0d0e14", border: "1px solid #2a2b3d", color: "#e2e0e7",
+                borderRadius: 6, padding: "7px 10px", fontSize: 13,
+                fontFamily: "'DM Sans', sans-serif", cursor: "pointer", outline: "none",
+              }}
+            >
+              {Object.entries(ARRIVAL_PRESETS).map(([key, p]) => (
+                <option key={key} value={key}>{p.label} — {p.hint}</option>
+              ))}
+            </select>
           </InputRow>
           <InputRow label="Day-of-Week Volume Distribution" hint="% of weekly calls · 0 = closed">
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginTop: 4 }}>
