@@ -9,6 +9,8 @@ export const TIER_PRESETS = {
     color: "#22c55e",
     desc: "Best for: FAQ deflection, order status, password resets, and other narrow, scripted tasks where a wrong answer is recoverable.",
     vendors: "Scripted FAQ · Simple intent routing · Low-stakes self-service",
+    // Tier-driven containment midpoint. Slider remains adjustable.
+    defaultContainment: 0.325,
     costs: {
       aiSIP: 0.002,
       aiSTT: 0.007,
@@ -25,6 +27,7 @@ export const TIER_PRESETS = {
     color: "#f59e0b",
     desc: "Best for: multi-turn intent handling, account lookups, light troubleshooting, and warm hand-off when the model isn't confident. Mid-market default.",
     vendors: "Multi-turn NLU · Account-aware routing · Confident hand-off",
+    defaultContainment: 0.525,
     costs: {
       aiSIP: 0.005,
       aiSTT: 0.008,
@@ -41,6 +44,7 @@ export const TIER_PRESETS = {
     color: "#ef4444",
     desc: "Best for: brand-sensitive front doors, sales-adjacent conversations, and complex flows where natural prosody and empathy materially change the outcome.",
     vendors: "Natural prosody · Empathic tone · Brand-sensitive front door",
+    defaultContainment: 0.725,
     costs: {
       aiSIP: 0.009,
       aiSTT: 0.015,

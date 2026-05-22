@@ -386,4 +386,13 @@ describe("presets — TIER_PRESETS", () => {
       c.aiSIP + c.aiSTT + c.aiLLM + c.aiTTS + c.aiOrchestration + c.aiCompliance;
     expect(base).toBeCloseTo(0.14, 3);
   });
+
+  it("each tier carries the demo-locked containment midpoint", () => {
+    // Brief: Lean 32.5% / Standard 52.5% / Human-like 72.5%. These are the
+    // values the containment slider snaps to when a tier is picked; if these
+    // ever shift, the demo narrative shifts with them.
+    expect(TIER_PRESETS.lean.defaultContainment).toBeCloseTo(0.325, 3);
+    expect(TIER_PRESETS.standard.defaultContainment).toBeCloseTo(0.525, 3);
+    expect(TIER_PRESETS.humanlike.defaultContainment).toBeCloseTo(0.725, 3);
+  });
 });

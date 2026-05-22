@@ -220,11 +220,11 @@ export default function Calculator() {
     workstationCost: 1700,
     equipmentLife: 60,
     // AI defaults tuned to industry reality (Gartner Dec 2025 survey).
-    // 60% containment = blended typical — 70-90% on routine intents, 10-30%
-    // on complex, weighted by mix. 18% escalation sits inside the 15-25%
-    // industry band. NOTE: tier-driven containment defaults set this slider
-    // dynamically — Lean 32.5% / Standard 52.5% / Human-like 72.5% (Round 2).
-    containmentRate: 0.60,
+    // Initial value matches the default-selected Standard tier (52.5%).
+    // Tier presets snap this to Lean 32.5% / Standard 52.5% / Human-like 72.5%
+    // when picked; slider stays adjustable from 25–95%. 18% escalation sits
+    // inside the 15–25% industry band.
+    containmentRate: 0.525,
     escalationRate: 0.18,
     postAiWagePremium: 28,
     // DOW distribution — % of weekly volume per day (0 = closed)
@@ -254,7 +254,16 @@ export default function Calculator() {
 
   const applyPreset = useCallback((tierKey) => {
     setSelectedTier(tierKey);
-    setInputs((p) => ({ ...p, ...TIER_PRESETS[tierKey].costs }));
+    const preset = TIER_PRESETS[tierKey];
+    setInputs((p) => ({
+      ...p,
+      ...preset.costs,
+      // Snap containment to the tier's midpoint. Slider stays adjustable
+      // after — user can drag it anywhere within min/max.
+      ...(preset.defaultContainment != null
+        ? { containmentRate: preset.defaultContainment }
+        : {}),
+    }));
   }, []);
 
   // ─── Core Math ─────────────────────────────────────────────────────────────
@@ -792,9 +801,9 @@ export default function Calculator() {
           <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
           <SectionLabel>AI Configuration</SectionLabel>
           <InputRow label="AI Containment Rate" hint="% of calls AI fully resolves">
-            <Slider value={Math.round(inputs.containmentRate * 100)} onChange={(v) => set("containmentRate", v / 100)} min={40} max={95} color="#a855f7" />
+            <Slider value={Math.round(inputs.containmentRate * 100)} onChange={(v) => set("containmentRate", v / 100)} min={25} max={95} color="#a855f7" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>40%</span>
+              <span style={{ fontSize: 10, color: "#4a4855" }}>25%</span>
               <span style={{ fontSize: 13, fontWeight: 700, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
                 {Math.round(inputs.containmentRate * 100)}%
               </span>
