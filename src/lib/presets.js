@@ -7,8 +7,8 @@ export const TIER_PRESETS = {
     label: "Lean Stack",
     range: "$0.06 – $0.10",
     color: "#22c55e",
-    desc: "Telnyx + Deepgram + GPT-4o-mini + OpenAI TTS. Self-hosted orchestration.",
-    vendors: "Telnyx · Deepgram · GPT-4o-mini · OpenAI TTS · Pipecat",
+    desc: "Best for: FAQ deflection, order status, password resets, and other narrow, scripted tasks where a wrong answer is recoverable.",
+    vendors: "Scripted FAQ · Simple intent routing · Low-stakes self-service",
     costs: {
       aiSIP: 0.002,
       aiSTT: 0.007,
@@ -23,8 +23,8 @@ export const TIER_PRESETS = {
     label: "Standard Production",
     range: "$0.10 – $0.18",
     color: "#f59e0b",
-    desc: "Retell/Deepgram platform + GPT-4o + Cartesia. Mid-market default.",
-    vendors: "Twilio · Deepgram · GPT-4o · Cartesia · Retell",
+    desc: "Best for: multi-turn intent handling, account lookups, light troubleshooting, and warm hand-off when the model isn't confident. Mid-market default.",
+    vendors: "Multi-turn NLU · Account-aware routing · Confident hand-off",
     costs: {
       aiSIP: 0.005,
       aiSTT: 0.008,
@@ -36,11 +36,11 @@ export const TIER_PRESETS = {
     },
   },
   premium: {
-    label: "Premium Quality",
+    label: "Human-like",
     range: "$0.18 – $0.35",
     color: "#ef4444",
-    desc: "Vapi + GPT-4o + ElevenLabs HD voice. Brand-sensitive deployments.",
-    vendors: "Twilio · Azure STT · GPT-4o · ElevenLabs v2 · Vapi",
+    desc: "Best for: brand-sensitive front doors, sales-adjacent conversations, and complex flows where natural prosody and empathy materially change the outcome.",
+    vendors: "Natural prosody · Empathic tone · Brand-sensitive front door",
     costs: {
       aiSIP: 0.009,
       aiSTT: 0.015,
