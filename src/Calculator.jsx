@@ -35,11 +35,55 @@ function SectionLabel({ children }) {
   );
 }
 
-function InputRow({ label, children, hint }) {
+// Hover/focus-triggered info tooltip. Anchored from the icon's left edge
+// extending right, so it stays inside the inputs panel regardless of where
+// the term sits on the row. Keyboard-accessible via tabIndex + onFocus.
+// Named InfoTip to avoid collision with Recharts' Tooltip import.
+function InfoTip({ text }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span style={{ position: "relative", display: "inline-flex", alignItems: "center", marginLeft: 6 }}>
+      <span
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        tabIndex={0}
+        aria-label="Definition"
+        style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 13, height: 13, borderRadius: "50%",
+          border: "1px solid #4a4855", color: "#8a8891", fontSize: 9, fontWeight: 700,
+          cursor: "help", fontFamily: "'DM Sans', sans-serif", userSelect: "none",
+          lineHeight: 1, paddingBottom: 1, background: "#0a0b0f",
+        }}
+      >?</span>
+      {open && (
+        <div role="tooltip" style={{
+          position: "absolute", bottom: "calc(100% + 8px)", left: 0,
+          width: 240, padding: "10px 12px",
+          background: "#0d0e14", border: "1px solid #a855f7", borderRadius: 8,
+          fontSize: 11, lineHeight: 1.5, color: "#c0bec9", fontWeight: 400,
+          fontFamily: "'DM Sans', sans-serif", textAlign: "left",
+          textTransform: "none", letterSpacing: 0,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.6)", zIndex: 100,
+          pointerEvents: "none",
+        }}>
+          {text}
+        </div>
+      )}
+    </span>
+  );
+}
+
+function InputRow({ label, children, hint, tooltip }) {
   return (
     <div style={{ marginBottom: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-        <label style={{ fontSize: 12, color: "#8a8891", fontWeight: 500 }}>{label}</label>
+        <label style={{ fontSize: 12, color: "#8a8891", fontWeight: 500, display: "inline-flex", alignItems: "center" }}>
+          {label}
+          {tooltip && <InfoTip text={tooltip} />}
+        </label>
         {hint && <span style={{ fontSize: 10, color: "#4a4855" }}>{hint}</span>}
       </div>
       {children}
@@ -598,7 +642,7 @@ export default function Calculator() {
           <InputRow label="Monthly Call Volume" hint="calls/mo">
             <NumInput value={inputs.monthlyVolume} onChange={(v) => set("monthlyVolume", v)} min={1000} step={1000} />
           </InputRow>
-          <InputRow label="Avg Handle Time" hint="minutes">
+          <InputRow label="Avg Handle Time" hint="minutes" tooltip="Average call length, talk plus after-call work. Industry: 5–7 min for service, 8–12 min for tech support. Post-AI, we model the residual stream as longer because AI deflects the easy calls first — what's left is harder.">
             <NumInput value={inputs.aht} onChange={(v) => set("aht", v)} min={1} max={60} step={0.5} suffix="min" />
           </InputRow>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -609,7 +653,7 @@ export default function Calculator() {
               <TimeSelect value={inputs.endHour} onChange={(v) => set("endHour", v)} min={1} max={24} />
             </InputRow>
           </div>
-          <InputRow label="Shrinkage" hint={`total ${inputs.inCenterShrink + inputs.outOfCenterShrink}% · ↑ shrink = ↑ trad cost`}>
+          <InputRow label="Shrinkage" hint={`total ${inputs.inCenterShrink + inputs.outOfCenterShrink}% · ↑ shrink = ↑ trad cost`} tooltip="Time agents are paid but unavailable for calls. In-Center = breaks, lunch, coaching, system meetings. Out-of-Center = training, PTO, sick. Industry standard 30–35%. ShyftOff carries its own utilization adjustment, not this number — that's where the structural cost gap comes from.">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <div>
                 <div style={{ fontSize: 10, color: "#4a4855", marginBottom: 4 }}>In-Center</div>
@@ -664,14 +708,14 @@ export default function Calculator() {
           <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
           <SectionLabel>Service Level</SectionLabel>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <InputRow label="SL Target">
+            <InputRow label="SL Target" tooltip="Service Level: 'X% of calls answered in Y seconds.' Industry default is 80/20 — 80% answered within 20 seconds. Drives the Erlang C staffing requirement: tighter SL ⇒ more agents needed."  >
               <NumInput value={inputs.serviceLevelTarget} onChange={(v) => set("serviceLevelTarget", v)} min={50} max={99} suffix="%" />
             </InputRow>
             <InputRow label="Answer In">
               <NumInput value={inputs.serviceLevelThreshold} onChange={(v) => set("serviceLevelThreshold", v)} min={5} max={120} suffix="sec" />
             </InputRow>
           </div>
-          <InputRow label="Optimal Occupancy">
+          <InputRow label="Optimal Occupancy" tooltip="Max % of paid time agents spend on calls. Above ~85% you trade SL for cost — queue times spike, burnout and attrition follow. The slider auto-defaults to the highest occupancy that still meets your SL target; push it higher and you'll see a silent SL warning.">
             {/* Floating % bubble above the slider, positioned over the thumb. */}
             <div style={{ position: "relative", height: 18, marginBottom: 2 }}>
               <span style={{
@@ -780,7 +824,7 @@ export default function Calculator() {
             </InputRow>
           </div>
 
-          <InputRow label="ShyftOff Rate" hint="flat loaded rate, no AI-tier or volume adjustment">
+          <InputRow label="ShyftOff Rate" hint="flat loaded rate, no AI-tier or volume adjustment" tooltip="Interval matching: traditional centers staff full shifts, which over-cover slow intervals and under-cover peaks. ShyftOff staffs interval-by-interval — agents log in for the windows you actually need. The flat $/hr rate already loads benefits, supervision, and platform — no extras.">
             <div style={{
               background: "#1a1228", border: "1px solid #a855f7", borderRadius: 6,
               padding: "10px 12px", display: "flex", justifyContent: "space-between",
@@ -797,7 +841,7 @@ export default function Calculator() {
           {showAI && (<>
           <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
           <SectionLabel>AI Configuration</SectionLabel>
-          <InputRow label="AI Containment Rate" hint="% of calls AI fully resolves">
+          <InputRow label="AI Containment Rate" hint="% of calls AI fully resolves" tooltip="% of contacts AI fully resolves without a human. Gartner Oct 2025 (n=321): industry median ~50%, top quartile 70%+. Tier midpoints — Lean 32.5% (FAQ deflection), Standard 52.5% (multi-turn NLU), Human-like 72.5% (conversational).">
             <Slider value={Math.round(inputs.containmentRate * 100)} onChange={(v) => set("containmentRate", v / 100)} min={25} max={95} color="#a855f7" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
               <span style={{ fontSize: 10, color: "#4a4855" }}>25%</span>
@@ -813,7 +857,7 @@ export default function Calculator() {
               Containment ≠ staffing cut — see the gap on the Scenarios tab.
             </div>
           </InputRow>
-          <InputRow label="Escalation Rate" hint="% of AI calls that go to human">
+          <InputRow label="Escalation Rate" hint="% of AI calls that go to human" tooltip="% of AI-handled calls that escalate to a human anyway (failed containment, customer demand, edge cases). Industry band 15–25%. The cascade is: containment × (1 − escalation) = net volume kept off humans.">
             <Slider value={Math.round(inputs.escalationRate * 100)} onChange={(v) => set("escalationRate", v / 100)} min={5} max={50} color="#f59e0b" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
               <span style={{ fontSize: 10, color: "#4a4855" }}>5%</span>
@@ -827,7 +871,7 @@ export default function Calculator() {
               Round 1. CV is hardcoded to 0.6 (industry voice-call default) in
               the lib pass-through above. Add them back via the Detailed-mode
               toggle in Round 3 if users want to see / tune the distribution. */}
-          <InputRow label="Post-AI Wage Premium (Trad)" hint="Tier-2 vs Tier-1 differential · industry: 20–30% (ZipRecruiter 2026)">
+          <InputRow label="Post-AI Wage Premium (Trad)" hint="Tier-2 vs Tier-1 differential · industry: 20–30% (ZipRecruiter 2026)" tooltip="When AI absorbs Tier-1 (routine) work, the human stream is all Tier-2 (complex). Tier-2 agents cost more — ZipRecruiter 2026 shows 20–30% wage premium over Tier-1. Applies to the traditional base wage only; ShyftOff rate is untouched.">
             <Slider value={inputs.postAiWagePremium} onChange={(v) => set("postAiWagePremium", v)} min={0} max={80} color="#f59e0b" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
               <span style={{ fontSize: 10, color: "#4a4855" }}>0%</span>
