@@ -206,6 +206,10 @@ export default function Calculator() {
     traditionalRate: 18,
     benefitsMultiplier: 35,
     shiftLength: 8,
+    // Coverage Target: SL-calibrated. 1.00 = "schedule enough to hit target
+    // SL given shift-block geometry." Lower = save cost, miss SL. Higher =
+    // over-provision. Slider range 70-150 covers lean to padded extremes.
+    influxTarget: 100,
     // Granular cost model (ported from v15 App.jsx)
     agentsPerSup: 15,
     agentsPerMgr: 40,
@@ -259,7 +263,7 @@ export default function Calculator() {
     const {
       monthlyVolume, aht, startHour, endHour,
       inCenterShrink, outOfCenterShrink, serviceLevelTarget, serviceLevelThreshold, maxOccupancy,
-      traditionalRate, benefitsMultiplier, shiftLength,
+      traditionalRate, benefitsMultiplier, shiftLength, influxTarget,
       agentsPerSup, agentsPerMgr, agentsPerWfm,
       supSalary, mgrSalary, wfmSalary,
       workstationCost, equipmentLife,
@@ -284,9 +288,7 @@ export default function Calculator() {
       startHour, endHour, dow, gigTiers, targetSL,
       targetSeconds: serviceLevelThreshold, maxOcc, shrinkage: shrink,
       traditionalRate, benefitsMultiplier, shiftLength,
-      // Coverage Target hardcoded to 1.00 (calibrated to deliver target SL).
-      // Was a user slider; locked per Round 1 spec for cleaner Simple-mode UX.
-      influxTarget: 1.0,
+      influxTarget: influxTarget / 100,
       agentsPerSup, agentsPerMgr, agentsPerWfm,
       supSalary, mgrSalary, wfmSalary,
       workstationCost, equipmentLife,
@@ -713,9 +715,23 @@ export default function Calculator() {
               <NumInput value={inputs.benefitsMultiplier} onChange={(v) => set("benefitsMultiplier", v)} min={0} max={100} suffix="%" />
             </InputRow>
           </div>
-          <InputRow label="Shift Length" hint="hrs">
-            <NumInput value={inputs.shiftLength} onChange={(v) => set("shiftLength", v)} min={4} max={12} step={0.5} suffix="hrs" />
-          </InputRow>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <InputRow label="Shift Length" hint="hrs">
+              <NumInput value={inputs.shiftLength} onChange={(v) => set("shiftLength", v)} min={4} max={12} step={0.5} suffix="hrs" />
+            </InputRow>
+            <InputRow
+              label="Coverage Target"
+              hint={
+                inputs.influxTarget < 100
+                  ? "lean — intentional SL miss"
+                  : inputs.influxTarget > 110
+                    ? "padded — safety cushion"
+                    : "balanced — meets target"
+              }
+            >
+              <NumInput value={inputs.influxTarget} onChange={(v) => set("influxTarget", v)} min={70} max={150} step={5} suffix="%" />
+            </InputRow>
+          </div>
 
           <div style={{
             background: "#0a0b0f", border: "1px solid #1e1f2e", borderRadius: 8,
