@@ -14,7 +14,6 @@ import { fmt, fmtD, fmtCur, fmtCurD } from "./lib/format.js";
 import { computeOnPhones } from "./lib/staffing.js";
 import { computeScenarioCost } from "./lib/scenarios.js";
 import { TIER_PRESETS } from "./lib/presets.js";
-import { lognormalPercentile } from "./lib/distribution.js";
 
 
 // ─── UI Helpers ───────────────────────────────────────────────────────────────
@@ -207,15 +206,6 @@ export default function Calculator() {
     traditionalRate: 18,
     benefitsMultiplier: 35,
     shiftLength: 8,
-    // Coverage Target: fraction of SL-meeting staffing the user wants to
-    // commit to. The lib auto-calibrates (binary search per scenario) so
-    // that 1.00 = "schedule enough to hit target SL" regardless of shift-
-    // block geometry inefficiency. So:
-    //   • 1.00 (default) → delivered SL ≈ target
-    //   • 0.95 → intentional ~4pp SL miss to save cost
-    //   • 1.10 → over-provision, SL exceeds target by ~5pp
-    // Slider range 70-150 covers lean-offshore to padded-enterprise extremes.
-    influxTarget: 100,
     // Granular cost model (ported from v15 App.jsx)
     agentsPerSup: 15,
     agentsPerMgr: 40,
@@ -225,17 +215,13 @@ export default function Calculator() {
     wfmSalary: 75000,
     workstationCost: 1700,
     equipmentLife: 60,
-    // AI defaults tuned to industry reality (see Gartner Dec 2025 survey).
-    // 60% containment = "blended typical" — 70-90% on routine intents, 10-30% on complex,
-    // weighted by mix. Higher numbers (75%+) feel generous to AI in demos and erode credibility.
-    // 18% escalation sits inside the 15-25% industry band without looking guessed.
+    // AI defaults tuned to industry reality (Gartner Dec 2025 survey).
+    // 60% containment = blended typical — 70-90% on routine intents, 10-30%
+    // on complex, weighted by mix. 18% escalation sits inside the 15-25%
+    // industry band. NOTE: tier-driven containment defaults set this slider
+    // dynamically — Lean 32.5% / Standard 52.5% / Human-like 72.5% (Round 2).
     containmentRate: 0.60,
     escalationRate: 0.18,
-    // AHT distribution model (replaces v15's fixed ahtFactor). The user sets
-    // CV (coefficient of variation, σ/μ) of the call-duration distribution;
-    // post-AI residual AHT is derived as the conditional mean above the
-    // containment cutoff. Default 0.6 matches industry voice-call spread.
-    ahtCV: 0.6,
     postAiWagePremium: 28,
     // DOW distribution — % of weekly volume per day (0 = closed)
     // Industry-realistic DOW (FlyFone: Mon +40% over Fri; weekends drop sharply).
@@ -247,20 +233,12 @@ export default function Calculator() {
     };
   });
 
-  // Tiered gig pricing — rate auto-selects based on total weekly productive hours
-  const [gigTiers, setGigTiers] = useState([
-    { minHours: 0,    rate: 31.00, label: "Base (<750 hrs/wk)" },
-    { minHours: 750,  rate: 30.50, label: "Tier 2 (750+ hrs/wk)" },
-    { minHours: 1000, rate: 30.00, label: "Tier 3 (1,000+ hrs/wk)" },
+  // ShyftOff rate: flat $35/hr loaded, no AI-tier or volume adjustment.
+  // useState retained (rather than a const) so future tiered pricing can be
+  // restored without rewiring; setGigTiers is intentionally unused for now.
+  const [gigTiers] = useState([
+    { minHours: 0, rate: 35.0, label: "ShyftOff Standard" },
   ]);
-
-  const updateGigTier = useCallback((idx, field, val) => {
-    setGigTiers((prev) => {
-      const next = [...prev];
-      next[idx] = { ...next[idx], [field]: val };
-      return next;
-    });
-  }, []);
 
   const set = useCallback((key, val) => {
     setInputs((p) => ({ ...p, [key]: val }));
@@ -281,11 +259,11 @@ export default function Calculator() {
     const {
       monthlyVolume, aht, startHour, endHour,
       inCenterShrink, outOfCenterShrink, serviceLevelTarget, serviceLevelThreshold, maxOccupancy,
-      traditionalRate, benefitsMultiplier, shiftLength, influxTarget,
+      traditionalRate, benefitsMultiplier, shiftLength,
       agentsPerSup, agentsPerMgr, agentsPerWfm,
       supSalary, mgrSalary, wfmSalary,
       workstationCost, equipmentLife,
-      containmentRate, escalationRate, ahtCV, postAiWagePremium,
+      containmentRate, escalationRate, postAiWagePremium,
       dowMon, dowTue, dowWed, dowThu, dowFri, dowSat, dowSun,
       aiSIP, aiSTT, aiLLM, aiTTS, aiOrchestration, aiCompliance, aiFailureBuffer,
     } = inputs;
@@ -306,11 +284,15 @@ export default function Calculator() {
       startHour, endHour, dow, gigTiers, targetSL,
       targetSeconds: serviceLevelThreshold, maxOcc, shrinkage: shrink,
       traditionalRate, benefitsMultiplier, shiftLength,
-      influxTarget: influxTarget / 100,
+      // Coverage Target hardcoded to 1.00 (calibrated to deliver target SL).
+      // Was a user slider; locked per Round 1 spec for cleaner Simple-mode UX.
+      influxTarget: 1.0,
       agentsPerSup, agentsPerMgr, agentsPerWfm,
       supSalary, mgrSalary, wfmSalary,
       workstationCost, equipmentLife,
-      aiCostPerMin, postAiWagePremium, ahtCV,
+      // AHT distribution CV hardcoded to 0.6 (industry voice-call default).
+      // Was a user slider; locked per Round 1 spec.
+      aiCostPerMin, postAiWagePremium, ahtCV: 0.6,
       // Make the maxOcc slider responsive across its full range. When the user
       // pushes occ above the SL-feasible plateau, staffing transitions to
       // pure-occ-driven and SL drops — surfaced as a warning. Defaults to
@@ -324,16 +306,16 @@ export default function Calculator() {
     const s1 = computeScenarioCost({ ...shared, monthlyVolume, ahtMins: aht,
       aiEnabled: false, containmentRate: 0, escalationRate: 0 });
 
-    // S2: Pre-AI ShyftOff Gig
+    // S2: Pre-AI ShyftOff
     const s2 = computeScenarioCost({ ...shared, monthlyVolume, ahtMins: aht,
       aiEnabled: false, containmentRate: 0, escalationRate: 0 });
 
-    // S3: Post-AI + Traditional FTE — humanAHT now auto-derived from
+    // S3: Post-AI + Traditional — humanAHT now auto-derived from
     // log-normal distribution and the net containment cutoff.
     const s3 = computeScenarioCost({ ...shared, monthlyVolume, ahtMins: aht,
       aiEnabled: true, containmentRate, escalationRate });
 
-    // S4: Post-AI + ShyftOff Gig (winner)
+    // S4: Post-AI + ShyftOff (winner)
     const s4 = computeScenarioCost({ ...shared, monthlyVolume, ahtMins: aht,
       aiEnabled: true, containmentRate, escalationRate });
 
@@ -379,14 +361,14 @@ export default function Calculator() {
 
     // Sensitivity analysis: cost at different containment rates
     // "Naive Linear Estimate" = what buyers ASSUME they'll get: preTraditional × (1 - containment).
-    // The gap between this dashed line and the real "Trad + AI" line is the headline story.
+    // The gap between this dashed line and the real "Traditional + AI" line is the headline story.
     const sensitivityData = [50, 60, 65, 70, 75, 80, 85, 90].map((cr) => {
       const cRate = cr / 100;
       const sT = computeScenarioCost({ ...shared, monthlyVolume, ahtMins: aht,
         aiEnabled: true, containmentRate: cRate, escalationRate });
       return {
         containment: `${cr}%`,
-        "Trad + AI": Math.round(sT.traditionalTotal),
+        "Traditional + AI": Math.round(sT.traditionalTotal),
         "ShyftOff + AI": Math.round(sT.gigTotal),
         "Trad (no AI)": Math.round(preTraditional),
         "Naive Linear Estimate": Math.round(preTraditional * (1 - cRate)),
@@ -571,8 +553,8 @@ export default function Calculator() {
             </div>
             <div style={{ fontSize: 12, color: "#6b6878" }}>
               {showAI
-                ? "Pre vs. post-AI economics across traditional and gig staffing"
-                : "Compare traditional brick-and-mortar vs. ShyftOff gig staffing"}
+                ? "Pre vs. post-AI economics — traditional contact center vs. ShyftOff"
+                : "Compare traditional contact center vs. ShyftOff"}
             </div>
           </div>
         </div>
@@ -681,34 +663,43 @@ export default function Calculator() {
               <NumInput value={inputs.serviceLevelThreshold} onChange={(v) => set("serviceLevelThreshold", v)} min={5} max={120} suffix="sec" />
             </InputRow>
           </div>
-          <InputRow label="Max Occupancy">
+          <InputRow label="Optimal Occupancy">
+            {/* Floating % bubble above the slider, positioned over the thumb. */}
+            <div style={{ position: "relative", height: 18, marginBottom: 2 }}>
+              <span style={{
+                position: "absolute",
+                // (value − min) / (max − min) gives the thumb's fractional
+                // position along the track. The -14px nudge centers the
+                // label over the thumb (label is ~28px wide for 2-digit %).
+                left: `calc(${((inputs.maxOccupancy - 50) / 45) * 100}% - 14px)`,
+                fontSize: 12, fontWeight: 700, color: "#a855f7",
+                fontFamily: "Space Mono, monospace",
+                transition: "left 80ms linear",
+                pointerEvents: "none",
+              }}>
+                {inputs.maxOccupancy}%
+              </span>
+            </div>
             <Slider value={inputs.maxOccupancy} onChange={(v) => set("maxOccupancy", v)} min={50} max={95} />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
               <span style={{ fontSize: 10, color: results.slWarning ? "#f59e0b" : "#22c55e" }}>
                 achieved SL: {Math.round(results.achievedSL * 100)}%
-                {results.slWarning ? (
-                  <> · ⚠ below target — occ-driven staffing dropping SL</>
-                ) : (
-                  <> · meets target ✓</>
-                )}
+                {results.slWarning
+                  ? <> · ⚠ below target — occ-driven staffing dropping SL</>
+                  : <> · meets target ✓</>}
               </span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                {inputs.maxOccupancy !== results.naturalMaxOccPct && (
-                  <button
-                    type="button"
-                    onClick={() => set("maxOccupancy", results.naturalMaxOccPct)}
-                    title={`Reset to natural (${results.naturalMaxOccPct}%) — the highest occ that still meets SL`}
-                    style={{
-                      background: "transparent", border: "1px solid #2a2b3d",
-                      borderRadius: 4, color: "#6b6878", padding: "1px 6px",
-                      fontSize: 10, cursor: "pointer", fontFamily: "Space Mono, monospace",
-                    }}
-                  >↻ {results.naturalMaxOccPct}%</button>
-                )}
-                <span style={{ fontSize: 12, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
-                  {inputs.maxOccupancy}%
-                </span>
-              </span>
+              {inputs.maxOccupancy !== results.naturalMaxOccPct && (
+                <button
+                  type="button"
+                  onClick={() => set("maxOccupancy", results.naturalMaxOccPct)}
+                  title={`Reset to natural (${results.naturalMaxOccPct}%) — the highest occ that still meets SL`}
+                  style={{
+                    background: "transparent", border: "1px solid #2a2b3d",
+                    borderRadius: 4, color: "#6b6878", padding: "1px 6px",
+                    fontSize: 10, cursor: "pointer", fontFamily: "Space Mono, monospace",
+                  }}
+                >↻ {results.naturalMaxOccPct}%</button>
+              )}
             </div>
           </InputRow>
 
@@ -722,38 +713,9 @@ export default function Calculator() {
               <NumInput value={inputs.benefitsMultiplier} onChange={(v) => set("benefitsMultiplier", v)} min={0} max={100} suffix="%" />
             </InputRow>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <InputRow label="Shift Length" hint="hrs">
-              <NumInput value={inputs.shiftLength} onChange={(v) => set("shiftLength", v)} min={4} max={12} step={0.5} suffix="hrs" />
-            </InputRow>
-            <InputRow
-              label="Coverage Target"
-              hint={
-                inputs.influxTarget < 100
-                  ? "lean BPO — intentional peak under-coverage"
-                  : inputs.influxTarget > 110
-                    ? "padded — costly safety cushion"
-                    : "balanced — scheduled ≈ required hours"
-              }
-            >
-              <NumInput value={inputs.influxTarget} onChange={(v) => set("influxTarget", v)} min={70} max={150} step={5} suffix="%" />
-              {results.estimatedAbandonment > 0.005 && (
-                <div style={{
-                  fontSize: 10, marginTop: 4,
-                  color: results.estimatedAbandonment > 0.08 ? "#ef4444"
-                    : results.estimatedAbandonment > 0.03 ? "#f59e0b"
-                    : "#6b6878",
-                }}>
-                  ⚠ est. abandonment: {(results.estimatedAbandonment * 100).toFixed(1)}%
-                  {results.estimatedAbandonment > 0.08
-                    ? " (above world-class threshold)"
-                    : results.estimatedAbandonment > 0.05
-                      ? " (acceptable industry range)"
-                      : ""}
-                </div>
-              )}
-            </InputRow>
-          </div>
+          <InputRow label="Shift Length" hint="hrs">
+            <NumInput value={inputs.shiftLength} onChange={(v) => set("shiftLength", v)} min={4} max={12} step={0.5} suffix="hrs" />
+          </InputRow>
 
           <div style={{
             background: "#0a0b0f", border: "1px solid #1e1f2e", borderRadius: 8,
@@ -796,31 +758,14 @@ export default function Calculator() {
             </InputRow>
           </div>
 
-          <InputRow label="ShyftOff Tiered Pricing" hint="rate auto-selects by weekly hrs">
-            {gigTiers.map((tier, idx) => (
-              <div key={idx} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8,
-                alignItems: "center", marginBottom: 6 }}>
-                <div style={{ fontSize: 11, color: "#6b6878" }}>{tier.label}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ fontSize: 11, color: "#4a4855" }}>$</span>
-                  <input type="number" value={tier.rate} min={10} max={60} step={0.25}
-                    onChange={(e) => updateGigTier(idx, "rate", parseFloat(e.target.value) || 0)}
-                    style={{
-                      width: 60, background: "#0d0e14", border: "1px solid #2a2b3d",
-                      borderRadius: 5, color: "#e2e0e7", padding: "5px 6px", fontSize: 11,
-                      fontFamily: "'Space Mono', monospace", outline: "none", textAlign: "right",
-                    }} />
-                  <span style={{ fontSize: 11, color: "#4a4855" }}>/hr</span>
-                </div>
-              </div>
-            ))}
-            <div style={{ background: "#1a1228", border: "1px solid #a855f7", borderRadius: 6,
-              padding: "8px 10px", marginTop: 4, display: "flex", justifyContent: "space-between",
-              alignItems: "center" }}>
-              <span style={{ fontSize: 11, color: "#8a8891" }}>
-                Active tier · {fmtD(results.s1.weeklyGigHours, 0)} hrs/wk
-              </span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#a855f7",
+          <InputRow label="ShyftOff Rate" hint="flat loaded rate, no AI-tier or volume adjustment">
+            <div style={{
+              background: "#1a1228", border: "1px solid #a855f7", borderRadius: 6,
+              padding: "10px 12px", display: "flex", justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+              <span style={{ fontSize: 11, color: "#8a8891" }}>ShyftOff Standard</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#a855f7",
                 fontFamily: "'Space Mono', monospace" }}>
                 ${fmtD(results.s1.gigRate, 2)}/hr
               </span>
@@ -856,64 +801,10 @@ export default function Calculator() {
               <span style={{ fontSize: 10, color: "#4a4855" }}>50%</span>
             </div>
           </InputRow>
-          <InputRow label="AHT Variability (CV)" hint="how spread out call durations are · σ/μ of the log-normal distribution">
-            <Slider value={Math.round(inputs.ahtCV * 100)} onChange={(v) => set("ahtCV", v / 100)} min={30} max={100} step={5} color="#06b6d4" />
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>0.30 (tight)</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#06b6d4", fontFamily: "Space Mono, monospace" }}>
-                CV = {fmtD(inputs.ahtCV, 2)}
-              </span>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>1.00 (broad)</span>
-            </div>
-            {/* Live percentile table — shows the implied call-duration distribution
-                so Trevor / a prospect can see exactly what we're assuming about
-                the mix. AI containment removes calls from the LEFT tail, so the
-                residual mean (post-AI) is the conditional mean above the cutoff. */}
-            {(() => {
-              const m = inputs.aht;
-              const cv = inputs.ahtCV;
-              const rows = [
-                ["Easy (p25)", lognormalPercentile(m, cv, 0.25), "#22c55e"],
-                ["Median", lognormalPercentile(m, cv, 0.50), "#8a8891"],
-                ["Mean (your input)", m, "#a855f7"],
-                ["Above avg (p75)", lognormalPercentile(m, cv, 0.75), "#f59e0b"],
-                ["Complex (p95)", lognormalPercentile(m, cv, 0.95), "#ef4444"],
-              ];
-              return (
-                <div style={{
-                  marginTop: 8, padding: "8px 10px", background: "#0a0b0f",
-                  border: "1px solid #1e1f2e", borderRadius: 6, fontSize: 10,
-                }}>
-                  <div style={{ color: "#4a4855", fontSize: 9, fontWeight: 600,
-                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 5 }}>
-                    Implied call-duration distribution
-                  </div>
-                  {rows.map(([label, value, color]) => (
-                    <div key={label} style={{
-                      display: "flex", justifyContent: "space-between",
-                      padding: "2px 0", color: "#6b6878",
-                    }}>
-                      <span style={{ color }}>{label}</span>
-                      <span style={{ fontFamily: "Space Mono, monospace", color: "#8a8891" }}>
-                        {fmtD(value, 1)} min
-                      </span>
-                    </div>
-                  ))}
-                  <div style={{
-                    marginTop: 6, paddingTop: 6, borderTop: "1px solid #1e1f2e",
-                    display: "flex", justifyContent: "space-between",
-                  }}>
-                    <span style={{ color: "#06b6d4" }}>
-                      Residual AHT after AI ({Math.round(inputs.containmentRate * (1 - inputs.escalationRate) * 100)}% net)
-                    </span>
-                    <span style={{ fontFamily: "Space Mono, monospace", color: "#06b6d4", fontWeight: 700 }}>
-                      {fmtD(results.humanAHTPostAI, 1)} min ({fmtD(results.s3.ahtFactor, 2)}×)
-                    </span>
-                  </div>
-                </div>
-              );
-            })()}
-          </InputRow>
+          {/* AHT Variability (CV) and the percentile table were removed in
+              Round 1. CV is hardcoded to 0.6 (industry voice-call default) in
+              the lib pass-through above. Add them back via the Detailed-mode
+              toggle in Round 3 if users want to see / tune the distribution. */}
           <InputRow label="Post-AI Wage Premium (Trad)" hint="Tier-2 vs Tier-1 differential · industry: 20–30% (ZipRecruiter 2026)">
             <Slider value={inputs.postAiWagePremium} onChange={(v) => set("postAiWagePremium", v)} min={0} max={80} color="#f59e0b" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
@@ -1077,7 +968,7 @@ export default function Calculator() {
                         </div>
                       </div>
                       <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 14 }}>
-                        Buyers assume <strong style={{ color: "#e2e0e7" }}>X% containment = X% staffing cut</strong>. It doesn't. Erlang C is non-linear, residual calls are harder, and B&amp;M overhead (shrinkage, shift bloat, supervisor ratios) doesn't scale down.
+                        Buyers assume <strong style={{ color: "#e2e0e7" }}>X% containment = X% staffing cut</strong>. It doesn't. Erlang C is non-linear, residual calls are harder, and traditional-center overhead (shrinkage, shift bloat, supervisor ratios) doesn't scale down.
                       </div>
 
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
@@ -1089,7 +980,7 @@ export default function Calculator() {
                           <div style={{ fontSize: 9, color: "#4a4855", marginTop: 4 }}>what AI handles</div>
                         </div>
                         <div style={{ background: "#0d0e14", border: "1px solid #2a2b3d", borderRadius: 8, padding: "12px 14px" }}>
-                          <div style={{ fontSize: 10, color: "#6b6878", marginBottom: 4 }}>Trad + AI cost change</div>
+                          <div style={{ fontSize: 10, color: "#6b6878", marginBottom: 4 }}>Traditional + AI cost change</div>
                           <div style={{ fontSize: 22, fontWeight: 800, color: tradReductionPct >= 0 ? "#22c55e" : "#ef4444", fontFamily: "Space Mono, monospace" }}>
                             {tradReductionPct >= 0 ? "−" : "+"}{Math.abs(tradReductionPct).toFixed(0)}%
                           </div>
@@ -1119,7 +1010,7 @@ export default function Calculator() {
                         <span style={{ color: "#f59e0b" }}>{fmtD(results.cvMultiplier, 1)}× more volatile</span> (same noise, smaller mean) — which drives a{" "}
                         <span style={{ color: "#f59e0b" }}>+{fmtD((results.s3.volatilityBuffer - 1) * 100, 1)}% peakedness-adjusted staffing buffer</span> on top of base Erlang C.
                         Add a <span style={{ color: "#f59e0b" }}>+{inputs.postAiWagePremium}% wage premium</span> (Tier-2 skill, ZipRecruiter 2026)
-                        and B&amp;M still carrying full shrinkage + supervisor ratios on a smaller pie.
+                        and traditional-center still carrying full shrinkage + supervisor ratios on a smaller pie.
                         <span style={{ color: "#6b6878", display: "block", marginTop: 6, fontSize: 10, lineHeight: 1.55 }}>
                           <strong style={{ color: "#8a8891" }}>Gartner (Oct 2025 survey, n=321 customer-service leaders):</strong>{" "}
                           only <span style={{ color: "#f59e0b" }}>20%</span> cut agent headcount due to AI{" · "}
@@ -1140,7 +1031,7 @@ export default function Calculator() {
                   gap: 12,
                 }}>
                   <ScenarioCard
-                    label="Traditional FTE"
+                    label="Traditional"
                     cost={results.preTraditional}
                     highlight="baseline"
                     color="#ef4444"
@@ -1148,7 +1039,7 @@ export default function Calculator() {
                     deltaLabel="(baseline)"
                   />
                   <ScenarioCard
-                    label="ShyftOff Gig"
+                    label="ShyftOff"
                     cost={results.preGig}
                     color={showAI ? "#f59e0b" : "#22c55e"}
                     highlight={showAI ? undefined : "winner"}
@@ -1159,7 +1050,7 @@ export default function Calculator() {
                   {showAI && (
                     <>
                       <ScenarioCard
-                        label="Traditional FTE + AI"
+                        label="Traditional + AI"
                         cost={results.postTraditional}
                         color="#ef4444"
                         highlight="danger"
@@ -1188,7 +1079,7 @@ export default function Calculator() {
                   <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
                     {showAI
                       ? "All four scenarios at current inputs — the gap widens as containment rate increases"
-                      : "Traditional brick-and-mortar vs. ShyftOff gig — per-month operating cost"}
+                      : "Traditional traditional contact center vs. ShyftOff gig — per-month operating cost"}
                   </div>
                   <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={showAI ? [
@@ -1232,7 +1123,7 @@ export default function Calculator() {
                   const tradWastePct = Math.round((tradScheduled - productive) / tradScheduled * 100);
 
                   const hoursData = [
-                    { name: "Traditional B&M", sub: `(${fmtD(results.avgFTEPreTrad, 0)} FTE in-house)`,
+                    { name: "Traditional", sub: `(${fmtD(results.avgFTEPreTrad, 0)} FTE in-house)`,
                       Productive: productive,
                       "In-Center Shrinkage": inCenterWaste,
                       "Out-of-Center Shrinkage": outOfCenterWaste,
@@ -1483,7 +1374,7 @@ export default function Calculator() {
                         <tr>
                           {(showAI
                             ? ["Metric", "Pre-AI Traditional", "Pre-AI ShyftOff", "Post-AI Traditional", "Post-AI ShyftOff"]
-                            : ["Metric", "Traditional FTE", "ShyftOff Gig"]
+                            : ["Metric", "Traditional", "ShyftOff"]
                           ).map((h, i) => (
                             <th key={h} style={{
                               textAlign: i === 0 ? "left" : "right", padding: "8px 12px",
@@ -1763,7 +1654,7 @@ export default function Calculator() {
                       Sensitivity Analysis: Total Cost by Containment Rate
                     </div>
                     <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
-                      The amber dashed line is what buyers <em>assume</em> they'll get (linear cut). The gap to Trad + AI is real B&amp;M overhead AI can't displace — shrinkage, shift bloat, supervisor ratios, residual SL floor.
+                      The amber dashed line is what buyers <em>assume</em> they'll get (linear cut). The gap to Trad + AI is real traditional-center overhead AI can't displace — shrinkage, shift bloat, supervisor ratios, residual SL floor.
                     </div>
                     <ResponsiveContainer width="100%" height={240}>
                       <LineChart data={results.sensitivityData} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
@@ -1772,7 +1663,7 @@ export default function Calculator() {
                         <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#6b6878", fontSize: 11 }} />
                         <Tooltip formatter={(v) => fmtCur(v)} contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }} />
                         <Legend wrapperStyle={{ fontSize: 12, color: "#8a8891" }} />
-                        <Line type="monotone" dataKey="Trad + AI" stroke="#ef4444" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="Traditional + AI" stroke="#ef4444" strokeWidth={2} dot={false} />
                         <Line type="monotone" dataKey="ShyftOff + AI" stroke="#a855f7" strokeWidth={2.5} dot={false} />
                         <Line type="monotone" dataKey="Trad (no AI)" stroke="#4a4855" strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
                         <Line type="monotone" dataKey="Naive Linear Estimate" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="2 4" dot={false} />
@@ -1968,7 +1859,7 @@ export default function Calculator() {
                   boxShadow: "0 0 40px rgba(168,85,247,0.12)",
                 }}>
                   <div style={{ fontSize: 12, color: "#8a8891", marginBottom: 8, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                    {showAI ? "Annual savings vs. Traditional FTE (no AI)" : "Annual savings vs. Traditional FTE"}
+                    {showAI ? "Annual savings vs. Traditional (no AI)" : "Annual savings vs. Traditional"}
                   </div>
                   <div style={{ fontSize: 56, fontWeight: 900, color: "#22c55e", fontFamily: "Space Mono, monospace", lineHeight: 1 }}>
                     {fmtCur(heroSavings)}
@@ -1978,8 +1869,8 @@ export default function Calculator() {
                   </div>
                   <div style={{ fontSize: 12, color: "#4a4855", marginTop: 6 }}>
                     {showAI
-                      ? "ShyftOff + AI vs. Traditional FTE with no automation"
-                      : "ShyftOff Gig vs. Traditional brick-and-mortar staffing"}
+                      ? "ShyftOff + AI vs. Traditional with no automation"
+                      : "ShyftOff vs. Traditional contact center staffing"}
                   </div>
                 </div>
 
@@ -1996,15 +1887,15 @@ export default function Calculator() {
                   {(() => {
                     const gigSavings = results.preTraditional - results.preGig;
                     const steps = showAI ? [
-                      { label: "Traditional FTE (no AI)", value: results.preTraditional, type: "base", color: "#ef4444" },
-                      { label: "Gig flexibility savings", value: -gigSavings, type: "save", color: "#22c55e" },
+                      { label: "Traditional (no AI)", value: results.preTraditional, type: "base", color: "#ef4444" },
+                      { label: "ShyftOff flexibility savings", value: -gigSavings, type: "save", color: "#22c55e" },
                       { label: "AI containment savings", value: -(results.preGig - results.s4.gigCost), type: "save", color: "#a855f7" },
                       { label: "AI infrastructure cost", value: results.s3AIMonthlyCost, type: "cost", color: "#f59e0b" },
                       { label: "ShyftOff + AI (total)", value: results.postGig, type: "total", color: "#22c55e" },
                     ] : [
-                      { label: "Traditional FTE", value: results.preTraditional, type: "base", color: "#ef4444" },
-                      { label: "Gig flexibility savings", value: -gigSavings, type: "save", color: "#22c55e" },
-                      { label: "ShyftOff Gig (total)", value: results.preGig, type: "total", color: "#22c55e" },
+                      { label: "Traditional", value: results.preTraditional, type: "base", color: "#ef4444" },
+                      { label: "ShyftOff flexibility savings", value: -gigSavings, type: "save", color: "#22c55e" },
+                      { label: "ShyftOff (total)", value: results.preGig, type: "total", color: "#22c55e" },
                     ];
                     return steps.map(({ label, value, type, color }) => (
                       <div key={label} style={{ marginBottom: 12 }}>
@@ -2070,7 +1961,7 @@ export default function Calculator() {
                       { point: "No idle labor cost", desc: "Gig agents are paid for productive intervals only — no shrinkage waste, no shift-block bloat." },
                       { point: "No support overhead", desc: "Skip the sup / mgr / WFM headcount and the workstation amortization. ShyftOff includes the platform layer." },
                       { point: "Flex with real demand", desc: "30-min granularity tracks your arrival curve. Traditional shifts can't reshape mid-day." },
-                      { point: "Higher-caliber agents", desc: "ShyftOff's model attracts experienced workers without the high turnover of brick-and-mortar centers." },
+                      { point: "Higher-caliber agents", desc: "ShyftOff's model attracts experienced workers without the high turnover of traditional contact center centers." },
                     ]).map(({ point, desc }) => (
                       <div key={point} style={{ marginBottom: 12 }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: "#a855f7", marginBottom: 2 }}>{point}</div>
@@ -2094,7 +1985,7 @@ export default function Calculator() {
                     <div style={{ fontSize: 13, color: "#8a8891" }}>
                       {showAI
                         ? "ShyftOff provides the flexible gig workforce that makes AI economics work. Talk to our team about your deployment strategy."
-                        : "ShyftOff is the flexible alternative to brick-and-mortar staffing. Talk to our team about your contact center."}
+                        : "ShyftOff is the flexible alternative to traditional contact center staffing. Talk to our team about your contact center."}
                     </div>
                   </div>
                   <div style={{ flexShrink: 0 }}>

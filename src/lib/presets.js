@@ -53,10 +53,11 @@ export const TIER_PRESETS = {
   },
 };
 
-// Default gig pricing tiers — based on PhyNet SOW. Rate auto-selects from
-// total weekly productive hours.
+// ShyftOff rate: flat $35/hr loaded, regardless of AI tier or volume.
+// The lib's tier-selection mechanism is kept for backward compatibility
+// but only one entry is needed at this rate. To restore tiered pricing
+// later, just add more {minHours, rate, label} entries; lib selects the
+// highest minHours-threshold the weekly hours qualify for.
 export const DEFAULT_GIG_TIERS = [
-  { minHours: 0, rate: 31.0, label: "Base (<750 hrs/wk)" },
-  { minHours: 750, rate: 30.5, label: "Tier 2 (750+ hrs/wk)" },
-  { minHours: 1000, rate: 30.0, label: "Tier 3 (1,000+ hrs/wk)" },
+  { minHours: 0, rate: 35.0, label: "ShyftOff Standard" },
 ];
