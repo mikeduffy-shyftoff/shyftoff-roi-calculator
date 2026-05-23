@@ -306,6 +306,77 @@ describe("scenarios — end-to-end scenario cost", () => {
     }
   });
 
+  // Round 4 demo smoke test — locks the canonical pitch scenario so the
+  // demo numbers can't drift between now and the Trevor/Tiana/Aaron review.
+  // Scenario (from the brief): 20,000 contacts/mo, 5-min AHT, 80/30 SL,
+  // $35 ShyftOff rate. The "7 FTE" in the brief name is the Erlang traffic
+  // intensity for this load:
+  //
+  //   Erlangs = (volume × AHT_min) / (operating-minutes/month)
+  //           = (20,000 × 5) / (4.33 wks × 5 days × 10 hrs × 60 min)
+  //           = 100,000 / 12,990 ≈ 7.7
+  //
+  // That's the theoretical FLOOR — agents busy on average. Real staffing
+  // sits above it because: SL buffer (~30%), shrinkage (÷ 0.65 at 35%),
+  // and for traditional, shift-block bloat (~60% on top). So ShyftOff at
+  // ~12 FTE-equivalents and traditional at ~24 is the expected story.
+  it("demo smoke: 20k contacts, 5min AHT, 80/30 SL, $35 rate", () => {
+    const r = computeScenarioCost({
+      arrivalCurve: CAMEL,
+      monthlyVolume: 20000,
+      ahtMins: 5,
+      startHour: 8,
+      endHour: 18,
+      dow: { Mon: 16.5, Tue: 15.5, Wed: 15.0, Thu: 14.5, Fri: 14.0, Sat: 13.0, Sun: 11.5 },
+      gigTiers: [{ minHours: 0, rate: 35, label: "ShyftOff Standard" }],
+      targetSL: 0.80,
+      targetSeconds: 30,
+      maxOcc: 0.85,
+      shrinkage: 0.35,
+      shiftLength: 8,
+      traditionalRate: 18,
+      benefitsMultiplier: 35,
+      agentsPerSup: 15,
+      aiEnabled: false,
+      containmentRate: 0,
+      escalationRate: 0,
+      aiCostPerMin: 0,
+      prioritizeOcc: true,
+    });
+    const HRS_PER_MONTH = 40 * 4.33;
+    // Erlang traffic intensity check (the "7" in 7-FTE smoke test).
+    const operatingMinutesMonth = 4.33 * 5 * 10 * 60;
+    const erlangs = (20000 * 5) / operatingMinutesMonth;
+    expect(erlangs).toBeCloseTo(7.7, 1);
+
+    // ShyftOff interval-matched FTEs — staffed to required, no shift bloat.
+    // Required hours include the SL buffer + shrinkage gross-up baked into
+    // the per-interval Erlang C requirement, so this lands well above the
+    // 7.7 floor. Drift here means the staffing solver changed shape.
+    const shyftFTE = r.monthlyRequiredHours / HRS_PER_MONTH;
+    expect(shyftFTE).toBeCloseTo(12.2, 0); // ±1 FTE tolerance
+
+    // Traditional shift-block FTEs — adds geometry bloat on top of ShyftOff.
+    // The ~2× ratio is the demo's headline narrative ("shift blocks need
+    // twice the bodies for the same coverage"). If this ratio compresses
+    // below 1.5× or stretches above 2.5×, something material changed.
+    const tradFTE = r.monthlyScheduledHours / HRS_PER_MONTH;
+    expect(tradFTE).toBeCloseTo(24.4, 0);
+    expect(tradFTE / shyftFTE).toBeGreaterThan(1.5);
+    expect(tradFTE / shyftFTE).toBeLessThan(2.5);
+
+    // Service level — staffing must actually deliver the 80/30 target.
+    // If achieved SL drops below 0.77 (target − 3pp tolerance), the
+    // calibration drifted and the demo is lying about coverage.
+    expect(r.achievedSL).toBeGreaterThanOrEqual(0.77);
+
+    // Cost narrative — savings must be a meaningful number, not a rounding
+    // error. At these defaults we expect mid-20s% on monthly savings.
+    const savingsPct = (r.traditionalCost - r.gigCost) / r.traditionalCost;
+    expect(savingsPct).toBeGreaterThan(0.20);
+    expect(savingsPct).toBeLessThan(0.40);
+  });
+
   // Wage premium — pins the brief-locked behavior: post-AI premium inflates
   // the traditional base wage only; benefits multiplier applies on top;
   // ShyftOff rate is untouched. If any of these drift, the AI scenario's
