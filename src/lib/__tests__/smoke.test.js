@@ -280,6 +280,78 @@ describe("scenarios — end-to-end scenario cost", () => {
     expect(s1WithBuf.volatilityBuffer).toBe(1);
     expect(s1WithBuf.traditionalCost).toBe(s1NoBuffer.traditionalCost);
   });
+
+  // AI cascade — pins the containment × (1 − escalation) net-deflection math
+  // end-to-end. If anyone "simplifies" this back to humanVolume = volume ×
+  // (1 − containment), three tests break loudly. This is the single math
+  // assertion most likely to drift under a careless refactor.
+  it("AI cascade: humanVolume and aiHandledCalls obey containment × (1 − escalation)", () => {
+    const cases = [
+      { containment: 0.50, escalation: 0.20 },
+      { containment: 0.325, escalation: 0.18 }, // Lean midpoint
+      { containment: 0.525, escalation: 0.18 }, // Standard midpoint
+      { containment: 0.725, escalation: 0.18 }, // Human-like midpoint
+    ];
+    for (const { containment, escalation } of cases) {
+      const r = computeScenarioCost({
+        ...baseArgs, aiEnabled: true,
+        containmentRate: containment, escalationRate: escalation,
+        ahtCV: 0.6, aiCostPerMin: 0.14,
+      });
+      const netDeflection = containment * (1 - escalation);
+      const expectedHuman = baseArgs.monthlyVolume * (1 - netDeflection);
+      const expectedAIHandled = baseArgs.monthlyVolume * netDeflection;
+      expect(r.humanVolume).toBeCloseTo(expectedHuman, 5);
+      expect(r.aiHandledCalls).toBeCloseTo(expectedAIHandled, 5);
+    }
+  });
+
+  // Wage premium — pins the brief-locked behavior: post-AI premium inflates
+  // the traditional base wage only; benefits multiplier applies on top;
+  // ShyftOff rate is untouched. If any of these drift, the AI scenario's
+  // savings number changes for the wrong reason.
+  it("wage premium: applies only to base trad wage in AI mode; ShyftOff rate untouched; off in pre-AI", () => {
+    const noPremium = computeScenarioCost({
+      ...baseArgs, aiEnabled: true,
+      containmentRate: 0.525, escalationRate: 0.18,
+      ahtCV: 0.6, aiCostPerMin: 0.14,
+      postAiWagePremium: 0,
+    });
+    const withPremium = computeScenarioCost({
+      ...baseArgs, aiEnabled: true,
+      containmentRate: 0.525, escalationRate: 0.18,
+      ahtCV: 0.6, aiCostPerMin: 0.14,
+      postAiWagePremium: 28,
+    });
+    // Loaded rate must scale exactly by (1 + premium/100). Benefits live in
+    // a separate multiplicative term, so the premium-on-base-only behavior
+    // shows up as a clean ×1.28 on loadedRate.
+    expect(withPremium.loadedRate).toBeCloseTo(noPremium.loadedRate * 1.28, 5);
+    // Formula check: loadedRate = trad × (1 + premium) × (1 + benefits).
+    const expected =
+      baseArgs.traditionalRate *
+      (1 + 28 / 100) *
+      (1 + baseArgs.benefitsMultiplier / 100);
+    expect(withPremium.loadedRate).toBeCloseTo(expected, 5);
+    // ShyftOff rate must NOT move with the premium — it's a flat loaded rate
+    // independent of the post-AI Tier-2 differential. This is the demo's
+    // "ShyftOff sidesteps the post-AI wage problem" narrative.
+    expect(withPremium.gigRate).toBe(noPremium.gigRate);
+
+    // Pre-AI (classic) mode ignores postAiWagePremium entirely.
+    const preNoPrem = computeScenarioCost({
+      ...baseArgs, aiEnabled: false,
+      containmentRate: 0, escalationRate: 0, aiCostPerMin: 0,
+      postAiWagePremium: 0,
+    });
+    const preWithPrem = computeScenarioCost({
+      ...baseArgs, aiEnabled: false,
+      containmentRate: 0, escalationRate: 0, aiCostPerMin: 0,
+      postAiWagePremium: 28,
+    });
+    expect(preWithPrem.loadedRate).toBe(preNoPrem.loadedRate);
+    expect(preWithPrem.traditionalCost).toBe(preNoPrem.traditionalCost);
+  });
 });
 
 describe("scenarios — granular cost model (full App.jsx parity)", () => {
