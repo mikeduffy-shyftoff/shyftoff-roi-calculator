@@ -220,6 +220,11 @@ export default function Calculator() {
   // Detailed = full model surface (current UI). Default Simple so
   // demo audiences see the answer before they see the assumptions.
   const [mode, setMode] = useState("simple");
+  // Detailed view: light inputs (volume, AHT, hours, SL, agent rate) are
+  // always visible; advanced (shrinkage, ratios, salaries, etc.) hides
+  // behind a + Show advanced expander. Defaults defaults closed so the
+  // first impression isn't a wall of 20 fields.
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [inputs, setInputs] = useState(() => {
     // Compute the "natural" maxOcc for the default workload once at mount.
     // This is the highest occupancy at which minAchievedSL still meets the
@@ -852,6 +857,7 @@ export default function Calculator() {
               <TimeSelect value={inputs.endHour} onChange={(v) => set("endHour", v)} min={1} max={24} />
             </InputRow>
           </div>
+          {showAdvanced && (<>
           <InputRow label="Shrinkage" hint={`total ${inputs.inCenterShrink + inputs.outOfCenterShrink}% · ↑ shrink = ↑ trad cost`} tooltip="Time agents are paid but unavailable for calls. In-Center = breaks, lunch, coaching, system meetings. Out-of-Center = training, PTO, sick. Industry standard 30–35%. ShyftOff carries its own utilization adjustment, not this number — that's where the structural cost gap comes from.">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <div>
@@ -903,6 +909,7 @@ export default function Calculator() {
               ))}
             </div>
           </InputRow>
+          </>)}
 
           <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
           <SectionLabel>Service Level</SectionLabel>
@@ -914,6 +921,7 @@ export default function Calculator() {
               <NumInput value={inputs.serviceLevelThreshold} onChange={(v) => set("serviceLevelThreshold", v)} min={5} max={120} suffix="sec" />
             </InputRow>
           </div>
+          {showAdvanced && (
           <InputRow label="Optimal Occupancy" tooltip="Max % of paid time agents spend on calls. Above ~85% you trade SL for cost — queue times spike, burnout and attrition follow. The slider auto-defaults to the highest occupancy that still meets your SL target; push it higher and you'll see a silent SL warning.">
             {/* Floating % bubble above the slider, positioned over the thumb. */}
             <div style={{ position: "relative", height: 18, marginBottom: 2 }}>
@@ -953,17 +961,17 @@ export default function Calculator() {
               )}
             </div>
           </InputRow>
+          )}
 
           <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
           <SectionLabel>Human Cost Model</SectionLabel>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <InputRow label="Agent Rate" hint="$/hr">
-              <NumInput value={inputs.traditionalRate} onChange={(v) => set("traditionalRate", v)} min={10} step={0.5} prefix="$" suffix="/hr" />
-            </InputRow>
-            <InputRow label="Benefits + Tax">
-              <NumInput value={inputs.benefitsMultiplier} onChange={(v) => set("benefitsMultiplier", v)} min={0} max={100} suffix="%" />
-            </InputRow>
-          </div>
+          <InputRow label="Agent Rate" hint="$/hr">
+            <NumInput value={inputs.traditionalRate} onChange={(v) => set("traditionalRate", v)} min={10} step={0.5} prefix="$" suffix="/hr" />
+          </InputRow>
+          {showAdvanced && (<>
+          <InputRow label="Benefits + Tax">
+            <NumInput value={inputs.benefitsMultiplier} onChange={(v) => set("benefitsMultiplier", v)} min={0} max={100} suffix="%" />
+          </InputRow>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <InputRow label="Shift Length" hint="hrs">
               <NumInput value={inputs.shiftLength} onChange={(v) => set("shiftLength", v)} min={4} max={12} step={0.5} suffix="hrs" />
@@ -1022,6 +1030,7 @@ export default function Calculator() {
               <NumInput value={inputs.equipmentLife} onChange={(v) => set("equipmentLife", v)} min={12} max={120} suffix="mo" />
             </InputRow>
           </div>
+          </>)}
 
           <InputRow label="ShyftOff Rate" hint="flat loaded rate, no AI-tier or volume adjustment" tooltip="Interval matching: traditional centers staff full shifts, which over-cover slow intervals and under-cover peaks. ShyftOff staffs interval-by-interval — agents log in for the windows you actually need. The flat $/hr rate already loads benefits, supervision, and platform — no extras.">
             <div style={{
@@ -1036,6 +1045,33 @@ export default function Calculator() {
               </span>
             </div>
           </InputRow>
+
+          {/* Advanced expander — hides 13 power-user inputs behind one click.
+              When collapsed, the panel shows only the 7 inputs that matter
+              to a contact-center buyer. When expanded, the advanced rows
+              slot back into their conceptual sections inline. */}
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            style={{
+              width: "100%", background: "transparent",
+              border: "1px dashed #2a2b3d", borderRadius: 6,
+              color: "#6b6878", padding: "8px 10px", marginTop: 4,
+              fontSize: 11, fontWeight: 600, cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: 6, transition: "all 120ms",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#a855f7"; e.currentTarget.style.borderColor = "#a855f7"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#6b6878"; e.currentTarget.style.borderColor = "#2a2b3d"; }}
+          >
+            <span>{showAdvanced ? "− Hide advanced" : "+ Show advanced"}</span>
+            <span style={{ fontSize: 9, color: "#4a4855" }}>
+              {showAdvanced
+                ? "(collapses shrinkage, ratios, salaries, etc.)"
+                : "(shrinkage, occupancy, ratios, salaries, workstation)"}
+            </span>
+          </button>
 
           {showAI && (<>
           <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
