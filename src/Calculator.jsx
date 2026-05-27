@@ -699,6 +699,17 @@ export default function Calculator() {
                 <InputRow label="Monthly Call Volume" hint="calls/mo">
                   <NumInput value={inputs.monthlyVolume} onChange={(v) => set("monthlyVolume", v)} min={1000} step={1000} />
                 </InputRow>
+                <InputRow label="Avg Handle Time" hint="minutes" tooltip="Average call length, talk plus after-call work. Industry: 5–7 min for service, 8–12 min for tech support. Post-AI, we model the residual stream as longer because AI deflects the easy calls first — what's left is harder.">
+                  <NumInput value={inputs.aht} onChange={(v) => set("aht", v)} min={1} max={60} step={0.5} suffix="min" />
+                </InputRow>
+                <InputRow label="Opens">
+                  <TimeSelect value={inputs.startHour} onChange={(v) => set("startHour", v)} min={0} max={23} />
+                </InputRow>
+                <InputRow label="Closes">
+                  <TimeSelect value={inputs.endHour} onChange={(v) => set("endHour", v)} min={1} max={24} />
+                </InputRow>
+              </div>
+              <div style={{ marginTop: 14 }}>
                 <InputRow label="ShyftOff Rate" hint="flat loaded, $/hr">
                   <div style={{
                     background: "#1a1228", border: "1px solid #a855f7", borderRadius: 6,
@@ -712,15 +723,9 @@ export default function Calculator() {
                     </span>
                   </div>
                 </InputRow>
-                <InputRow label="Opens">
-                  <TimeSelect value={inputs.startHour} onChange={(v) => set("startHour", v)} min={0} max={23} />
-                </InputRow>
-                <InputRow label="Closes">
-                  <TimeSelect value={inputs.endHour} onChange={(v) => set("endHour", v)} min={1} max={24} />
-                </InputRow>
               </div>
 
-              {showAI && (
+              {showAI ? (
                 <div style={{ marginTop: 6 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
                     textTransform: "uppercase", color: "#a855f7", marginBottom: 10 }}>
@@ -748,6 +753,32 @@ export default function Calculator() {
                     })}
                   </div>
                 </div>
+              ) : (
+                /* AI off — show a discovery CTA inside the inputs panel so the
+                   option is visible without forcing the user up to the header. */
+                <button
+                  type="button"
+                  onClick={() => setShowAI(true)}
+                  style={{
+                    width: "100%", marginTop: 8, background: "transparent",
+                    border: "1px dashed #2a2b3d", borderRadius: 8,
+                    padding: "10px 12px", cursor: "pointer",
+                    fontFamily: "'DM Sans', sans-serif",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                    transition: "all 120ms",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "#a855f7";
+                    e.currentTarget.style.background = "#0d0814";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "#2a2b3d";
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#a855f7" }}>+ Add AI scenarios</span>
+                  <span style={{ fontSize: 10, color: "#6b6878" }}>see post-AI economics + tier picker</span>
+                </button>
               )}
             </div>
 
