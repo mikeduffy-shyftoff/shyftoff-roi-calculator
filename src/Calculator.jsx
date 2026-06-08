@@ -216,14 +216,10 @@ export default function Calculator() {
   const [arrivalKey, setArrivalKey] = useState("camel");
   const [activeTab, setActiveTab] = useState("scenarios");
   const [selectedTier, setSelectedTier] = useState("standard");
-  // Simple = exec-friendly headline view (4 inputs + savings hero).
-  // Detailed = full model surface (current UI). Default Simple so
-  // demo audiences see the answer before they see the assumptions.
-  const [mode, setMode] = useState("simple");
-  // Detailed view: light inputs (volume, AHT, hours, SL, agent rate) are
-  // always visible; advanced (shrinkage, ratios, salaries, etc.) hides
-  // behind a + Show advanced expander. Defaults defaults closed so the
-  // first impression isn't a wall of 20 fields.
+  // Light inputs (volume, AHT, hours, SL, agent rate) are always visible;
+  // advanced (shrinkage, ratios, salaries, etc.) hides behind a + Show
+  // advanced expander. Defaults closed so the first impression isn't a
+  // wall of 20 fields.
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [inputs, setInputs] = useState(() => {
     // Compute the "natural" maxOcc for the default workload once at mount.
@@ -650,27 +646,6 @@ export default function Calculator() {
           </div>
         </div>
         <div className="calc-header-controls" style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          {/* Simple / Detailed segmented control */}
-          <div style={{
-            display: "inline-flex", background: "#1F0E2F", border: "1px solid #5D2F4B",
-            borderRadius: 6, padding: 2,
-          }}>
-            {["simple", "detailed"].map((m) => (
-              <button key={m}
-                onClick={() => setMode(m)}
-                style={{
-                  background: mode === m ? "#3D2050" : "transparent",
-                  border: mode === m ? "1px solid #794EC2" : "1px solid transparent",
-                  color: mode === m ? "#794EC2" : "#C9C1D6",
-                  borderRadius: 4, padding: "4px 12px", fontSize: 11, fontWeight: 600,
-                  cursor: "pointer", fontFamily: "'Inter', sans-serif",
-                  textTransform: "capitalize",
-                }}
-              >
-                {m}
-              </button>
-            ))}
-          </div>
           <button
             onClick={() => setShowAI(!showAI)}
             style={{
@@ -686,197 +661,6 @@ export default function Calculator() {
         </div>
       </div>
 
-      {/* ── SIMPLE view (exec headline) ─────────────────────────────────── */}
-      {mode === "simple" && (() => {
-        // Mirror the Summary tab's hero-savings logic so the two views agree:
-        // baseline is always pre-AI Traditional; comparison is postGig with AI
-        // on, preGig otherwise.
-        const monthlyTrad = results.preTraditional;
-        const monthlyShyft = showAI ? results.postGig : results.preGig;
-        const monthlySavings = monthlyTrad - monthlyShyft;
-        const savingsPct = monthlyTrad > 0 ? monthlySavings / monthlyTrad : 0;
-        return (
-          <div style={{ padding: "40px 24px 80px", maxWidth: 760, margin: "0 auto" }}>
-
-            {/* Inputs */}
-            <div style={{
-              background: "#2E1740", border: "1px solid #4D1F3B", borderRadius: 12,
-              padding: "22px 26px", marginBottom: 22,
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
-                textTransform: "uppercase", color: "#794EC2", marginBottom: 16 }}>
-                Inputs
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                <InputRow label="Monthly Call Volume" hint="calls/mo">
-                  <NumInput value={inputs.monthlyVolume} onChange={(v) => set("monthlyVolume", v)} min={1000} step={1000} />
-                </InputRow>
-                <InputRow label="Avg Handle Time" hint="minutes" tooltip="Average call length, talk plus after-call work. Industry: 5–7 min for service, 8–12 min for tech support. Post-AI, we model the residual stream as longer because AI deflects the easy calls first — what's left is harder.">
-                  <NumInput value={inputs.aht} onChange={(v) => set("aht", v)} min={1} max={60} step={0.5} suffix="min" />
-                </InputRow>
-                <InputRow label="Opens">
-                  <TimeSelect value={inputs.startHour} onChange={(v) => set("startHour", v)} min={0} max={23} />
-                </InputRow>
-                <InputRow label="Closes">
-                  <TimeSelect value={inputs.endHour} onChange={(v) => set("endHour", v)} min={1} max={24} />
-                </InputRow>
-              </div>
-              <div style={{ marginTop: 14 }}>
-                <InputRow label="ShyftOff Rate" hint="flat loaded, $/hr">
-                  <div style={{
-                    background: "#3D2050", border: "1px solid #794EC2", borderRadius: 6,
-                    padding: "7px 10px", display: "flex", justifyContent: "space-between",
-                    alignItems: "center",
-                  }}>
-                    <span style={{ fontSize: 11, color: "#C9C1D6" }}>ShyftOff Standard</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#794EC2",
-                      fontFamily: "'Inter', sans-serif" }}>
-                      ${fmtD(results.s1.gigRate, 2)}/hr
-                    </span>
-                  </div>
-                </InputRow>
-              </div>
-
-              {showAI ? (
-                <div style={{ marginTop: 6 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
-                    textTransform: "uppercase", color: "#794EC2", marginBottom: 10 }}>
-                    AI Tier
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                    {Object.entries(TIER_PRESETS).map(([key, preset]) => {
-                      const active = selectedTier === key;
-                      return (
-                        <button key={key} onClick={() => applyPreset(key)} style={{
-                          background: active ? "#3D2050" : "#27133A",
-                          border: `1px solid ${active ? preset.color : "#5D2F4B"}`,
-                          borderRadius: 7, padding: "9px 8px", cursor: "pointer",
-                          textAlign: "center",
-                        }}>
-                          <div style={{ fontSize: 11, fontWeight: 700,
-                            color: active ? preset.color : "#C9C1D6", lineHeight: 1.2 }}>
-                            {key === "lean" ? "Lean" : key === "standard" ? "Standard" : "Human-like"}
-                          </div>
-                          <div style={{ fontSize: 9, color: active ? "#C9C1D6" : "#9B7FB5", marginTop: 3 }}>
-                            {Math.round(preset.defaultContainment * 100)}% containment
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                /* AI off — show a discovery CTA inside the inputs panel so the
-                   option is visible without forcing the user up to the header. */
-                <button
-                  type="button"
-                  onClick={() => setShowAI(true)}
-                  style={{
-                    width: "100%", marginTop: 8, background: "transparent",
-                    border: "1px dashed #5D2F4B", borderRadius: 8,
-                    padding: "10px 12px", cursor: "pointer",
-                    fontFamily: "'Inter', sans-serif",
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                    transition: "all 120ms",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "#794EC2";
-                    e.currentTarget.style.background = "#1F0E2F";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "#5D2F4B";
-                    e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#794EC2" }}>+ Add AI scenarios</span>
-                  <span style={{ fontSize: 10, color: "#C9C1D6" }}>see post-AI economics + tier picker</span>
-                </button>
-              )}
-            </div>
-
-            {/* Savings hero */}
-            <div style={{
-              background: "linear-gradient(135deg, #3D2050 0%, #1F0E2F 100%)",
-              border: "1px solid #794EC2", borderRadius: 14,
-              padding: "32px 36px", textAlign: "center",
-              boxShadow: "0 0 40px rgba(168,85,247,0.12)", marginBottom: 18,
-            }}>
-              <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 10,
-                letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                {showAI ? "Monthly savings — ShyftOff + AI vs Traditional" : "Monthly savings — ShyftOff vs Traditional"}
-              </div>
-              <div style={{ fontSize: 52, fontWeight: 900, color: "#FF7866",
-                fontFamily: "Inter, sans-serif", lineHeight: 1 }}>
-                {fmtCur(monthlySavings)}
-              </div>
-              <div style={{ fontSize: 15, color: "#794EC2", marginTop: 8, fontWeight: 600 }}>
-                {fmtD(savingsPct * 100, 1)}% reduction · {fmtCur(monthlySavings * 12)}/yr
-              </div>
-
-              {/* Trad vs ShyftOff side-by-side */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24,
-                marginTop: 28, paddingTop: 22, borderTop: "1px solid #4D1F3B" }}>
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 10, color: "#C9C1D6", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                    Traditional
-                  </div>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: "#FF66C4",
-                    fontFamily: "Inter, sans-serif", marginTop: 4 }}>
-                    {fmtCur(monthlyTrad)}
-                  </div>
-                  <div style={{ fontSize: 10, color: "#9B7FB5", marginTop: 2 }}>per month</div>
-                </div>
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 10, color: "#C9C1D6", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                    ShyftOff{showAI ? " + AI" : ""}
-                  </div>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: "#FF7866",
-                    fontFamily: "Inter, sans-serif", marginTop: 4 }}>
-                    {fmtCur(monthlyShyft)}
-                  </div>
-                  <div style={{ fontSize: 10, color: "#9B7FB5", marginTop: 2 }}>per month</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Coverage delta — missed-call recovery proxy (interval-coverage) */}
-            <div style={{
-              background: "#2E1740", border: "1px solid #4D1F3B", borderRadius: 12,
-              padding: "18px 24px", marginBottom: 22,
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
-                textTransform: "uppercase", color: "#794EC2", marginBottom: 8 }}>
-                Coverage Recovery
-              </div>
-              <div style={{ fontSize: 14, color: "#FFFFFF", lineHeight: 1.5 }}>
-                ShyftOff covers{" "}
-                <strong style={{ color: "#FF7866", fontFamily: "'Inter', sans-serif" }}>
-                  {results.underStaffedIntervalsWeek}
-                </strong>{" "}
-                more intervals/week than the traditional shift-block schedule.
-              </div>
-              <div style={{ fontSize: 11, color: "#C9C1D6", marginTop: 6, lineHeight: 1.5 }}>
-                Traditional under-staffs {results.underStaffedIntervalsDay} interval{results.underStaffedIntervalsDay === 1 ? "" : "s"}
-                {" "}per operating day; ShyftOff matches required staffing every interval.
-              </div>
-            </div>
-
-            {/* Switch-to-detailed hint */}
-            <div style={{ textAlign: "center", fontSize: 11, color: "#9B7FB5" }}>
-              Switch to{" "}
-              <button onClick={() => setMode("detailed")} style={{
-                background: "none", border: "none", color: "#794EC2", cursor: "pointer",
-                fontWeight: 700, fontSize: 11, fontFamily: "'Inter', sans-serif",
-                padding: 0, textDecoration: "underline",
-              }}>Detailed</button>
-              {" "}to drill into staffing, shrinkage, Erlang C math, and the AI cost stack.
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* ── DETAILED view (full model surface) ──────────────────────────── */}
-      {mode === "detailed" && (
       <div className="calc-layout" style={{ display: "grid", gridTemplateColumns: "360px 1fr", minHeight: "calc(100vh - 65px)" }}>
 
         {/* ── Left: Inputs ───────────────────────────────────────────────────── */}
@@ -2349,7 +2133,6 @@ export default function Calculator() {
           </div>
         </div>
       </div>
-      )}
     </div>
   );
 }
