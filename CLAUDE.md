@@ -40,13 +40,18 @@ Current site: dazzling-faloodeh-62ef97.netlify.app
 - `src/lib/__tests__/smoke.test.js` — 22 tests pinning numerical output so
   refactors can't silently drift the math.
 
-## Conventions
-- Dark theme (`#0a0b0f` background)
-- Purple (`#a855f7`) = ShyftOff brand
-- Red (`#ef4444`) = traditional / waste
-- Green (`#22c55e`) = savings / winner
-- Amber (`#f59e0b`) = SL risk / cautionary
-- Fonts: DM Sans (body), Space Mono (numbers)
+## Conventions — aligned to the `shyftoff-brand` skill
+- Dark theme (`#27133A` Deep Purple background)
+- `#794EC2` Orion Violet = primary interactive / ShyftOff brand purple
+- `#4D1F3B` Crimson Nova = traditional / deep accent surfaces
+- `#FF66C4` Nebula Pink = "traditional / over-staffed" data viz
+- `#FF7866` Cosmic Orange = savings / winner / CTA highlights
+- `#FFE566` Solar Flare = SL warning / cautionary
+- `#8F68D3` Starlight Purple = secondary mid-tones, accent lines
+- `#C9C1D6` brand gray-muted = secondary text
+- Font: Inter (single family — body and numbers both)
+- Logo: real ShyftOff SVG inline (from `~/.claude/skills/shyftoff-brand/references/logo-inline.md`)
+  - dark-bg variant: wordmark fill `#FFFFFF`, rocket gradient unchanged
 
 ## Responsive layout
 Media queries in `src/index.css` collapse the calculator to a single column

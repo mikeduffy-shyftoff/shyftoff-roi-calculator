@@ -20,7 +20,7 @@ import { TIER_PRESETS } from "./lib/presets.js";
 function Card({ children, style = {} }) {
   return (
     <div style={{
-      background: "#13141a", border: "1px solid #1e1f2e", borderRadius: 12,
+      background: "#1F0E2F", border: "1px solid #4D1F3B", borderRadius: 12,
       padding: "20px 24px", ...style,
     }}>{children}</div>
   );
@@ -29,7 +29,7 @@ function Card({ children, style = {} }) {
 function SectionLabel({ children }) {
   return (
     <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
-      textTransform: "uppercase", color: "#a855f7", marginBottom: 12, marginTop: 4 }}>
+      textTransform: "uppercase", color: "#794EC2", marginBottom: 12, marginTop: 4 }}>
       {children}
     </div>
   );
@@ -53,18 +53,18 @@ function InfoTip({ text }) {
         style={{
           display: "inline-flex", alignItems: "center", justifyContent: "center",
           width: 13, height: 13, borderRadius: "50%",
-          border: "1px solid #4a4855", color: "#8a8891", fontSize: 9, fontWeight: 700,
-          cursor: "help", fontFamily: "'DM Sans', sans-serif", userSelect: "none",
-          lineHeight: 1, paddingBottom: 1, background: "#0a0b0f",
+          border: "1px solid #9B7FB5", color: "#C9C1D6", fontSize: 9, fontWeight: 700,
+          cursor: "help", fontFamily: "'Inter', sans-serif", userSelect: "none",
+          lineHeight: 1, paddingBottom: 1, background: "#27133A",
         }}
       >?</span>
       {open && (
         <div role="tooltip" style={{
           position: "absolute", bottom: "calc(100% + 8px)", left: 0,
           width: 240, padding: "10px 12px",
-          background: "#0d0e14", border: "1px solid #a855f7", borderRadius: 8,
-          fontSize: 11, lineHeight: 1.5, color: "#c0bec9", fontWeight: 400,
-          fontFamily: "'DM Sans', sans-serif", textAlign: "left",
+          background: "#2E1740", border: "1px solid #794EC2", borderRadius: 8,
+          fontSize: 11, lineHeight: 1.5, color: "#E8DFF6", fontWeight: 400,
+          fontFamily: "'Inter', sans-serif", textAlign: "left",
           textTransform: "none", letterSpacing: 0,
           boxShadow: "0 8px 24px rgba(0,0,0,0.6)", zIndex: 100,
           pointerEvents: "none",
@@ -80,11 +80,11 @@ function InputRow({ label, children, hint, tooltip }) {
   return (
     <div style={{ marginBottom: 14 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-        <label style={{ fontSize: 12, color: "#8a8891", fontWeight: 500, display: "inline-flex", alignItems: "center" }}>
+        <label style={{ fontSize: 12, color: "#C9C1D6", fontWeight: 500, display: "inline-flex", alignItems: "center" }}>
           {label}
           {tooltip && <InfoTip text={tooltip} />}
         </label>
-        {hint && <span style={{ fontSize: 10, color: "#4a4855" }}>{hint}</span>}
+        {hint && <span style={{ fontSize: 10, color: "#9B7FB5" }}>{hint}</span>}
       </div>
       {children}
     </div>
@@ -94,22 +94,22 @@ function InputRow({ label, children, hint, tooltip }) {
 function NumInput({ value, onChange, min = 0, max, step = 1, prefix, suffix }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      {prefix && <span style={{ fontSize: 12, color: "#6b6878" }}>{prefix}</span>}
+      {prefix && <span style={{ fontSize: 12, color: "#C9C1D6" }}>{prefix}</span>}
       <input
         type="number" value={value} min={min} max={max} step={step}
         onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
         style={{
-          flex: 1, background: "#0d0e14", border: "1px solid #2a2b3d",
-          borderRadius: 6, color: "#e2e0e7", padding: "7px 10px", fontSize: 13,
-          fontFamily: "'Space Mono', monospace", outline: "none", width: "100%",
+          flex: 1, background: "#2E1740", border: "1px solid #5D2F4B",
+          borderRadius: 6, color: "#FFFFFF", padding: "7px 10px", fontSize: 13,
+          fontFamily: "'Inter', sans-serif", outline: "none", width: "100%",
         }}
       />
-      {suffix && <span style={{ fontSize: 12, color: "#6b6878", minWidth: 28 }}>{suffix}</span>}
+      {suffix && <span style={{ fontSize: 12, color: "#C9C1D6", minWidth: 28 }}>{suffix}</span>}
     </div>
   );
 }
 
-function Slider({ value, onChange, min, max, step = 1, color = "#a855f7" }) {
+function Slider({ value, onChange, min, max, step = 1, color = "#794EC2" }) {
   return (
     <input type="range" value={value} min={min} max={max} step={step}
       onChange={(e) => onChange(parseFloat(e.target.value))}
@@ -140,9 +140,9 @@ function TimeSelect({ value, onChange, min = 0, max = 24 }) {
       value={value}
       onChange={(e) => onChange(parseInt(e.target.value, 10))}
       style={{
-        width: "100%", background: "#0d0e14", border: "1px solid #2a2b3d",
-        borderRadius: 6, color: "#e2e0e7", padding: "7px 10px", fontSize: 13,
-        fontFamily: "'Space Mono', monospace", outline: "none",
+        width: "100%", background: "#2E1740", border: "1px solid #5D2F4B",
+        borderRadius: 6, color: "#FFFFFF", padding: "7px 10px", fontSize: 13,
+        fontFamily: "'Inter', sans-serif", outline: "none",
         cursor: "pointer", appearance: "none",
         backgroundImage:
           "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%236b6878' d='M0 0l5 6 5-6z'/></svg>\")",
@@ -163,34 +163,34 @@ function ScenarioCard({ label, cost, delta, deltaLabel, color, highlight, tag })
   const isDanger = highlight === "danger";
   return (
     <div style={{
-      background: isWinner ? "linear-gradient(135deg, #1a1228 0%, #160d24 100%)"
-        : isDanger ? "linear-gradient(135deg, #1a100e 0%, #140b0a 100%)"
-        : "#13141a",
-      border: `1px solid ${isWinner ? "#a855f7" : isDanger ? "#ef4444" : "#1e1f2e"}`,
+      background: isWinner ? "linear-gradient(135deg, #3D2050 0%, #2E1740 100%)"
+        : isDanger ? "linear-gradient(135deg, #3D1F1F 0%, #3D1F1F 100%)"
+        : "#1F0E2F",
+      border: `1px solid ${isWinner ? "#794EC2" : isDanger ? "#FF66C4" : "#4D1F3B"}`,
       borderRadius: 12, padding: "20px 20px 16px", position: "relative",
       boxShadow: isWinner ? "0 0 24px rgba(168,85,247,0.15)" : "none",
     }}>
       {tag && (
         <div style={{
           position: "absolute", top: -1, right: 12,
-          background: isWinner ? "#a855f7" : "#ef4444",
+          background: isWinner ? "#794EC2" : "#FF66C4",
           color: "#fff", fontSize: 9, fontWeight: 700, letterSpacing: "0.08em",
           textTransform: "uppercase", padding: "3px 8px", borderRadius: "0 0 6px 6px",
         }}>{tag}</div>
       )}
-      <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 6, fontWeight: 500 }}>{label}</div>
-      <div style={{ fontSize: 28, fontWeight: 700, color, fontFamily: "'Space Mono', monospace", lineHeight: 1 }}>
+      <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 6, fontWeight: 500 }}>{label}</div>
+      <div style={{ fontSize: 28, fontWeight: 700, color, fontFamily: "'Inter', sans-serif", lineHeight: 1 }}>
         {fmtCur(cost)}
       </div>
-      <div style={{ fontSize: 11, color: "#4a4855", marginTop: 2 }}>per month</div>
+      <div style={{ fontSize: 11, color: "#9B7FB5", marginTop: 2 }}>per month</div>
       {delta !== undefined && (
         <div style={{
           marginTop: 10, fontSize: 12, fontWeight: 600,
-          color: delta < 0 ? "#22c55e" : delta > 0 ? "#ef4444" : "#6b6878",
+          color: delta < 0 ? "#FF7866" : delta > 0 ? "#FF66C4" : "#C9C1D6",
         }}>
           {delta < 0 ? "▼ " : delta > 0 ? "▲ " : ""}
           {delta < 0 ? `${fmtCur(Math.abs(delta))} saved` : delta > 0 ? `${fmtCur(delta)} more` : "baseline"}
-          {deltaLabel && <span style={{ color: "#4a4855", fontWeight: 400 }}> {deltaLabel}</span>}
+          {deltaLabel && <span style={{ color: "#9B7FB5", fontWeight: 400 }}> {deltaLabel}</span>}
         </div>
       )}
     </div>
@@ -202,7 +202,7 @@ function BarLabel({ x, y, width, value, formatter }) {
   if (!value) return null;
   return (
     <text x={x + width / 2} y={y - 6} textAnchor="middle"
-      fill="#8a8891" fontSize={10} fontFamily="Space Mono,monospace">
+      fill="#C9C1D6" fontSize={10} fontFamily="Inter,sans-serif">
       {formatter ? formatter(value) : value}
     </text>
   );
@@ -399,12 +399,12 @@ export default function Calculator() {
 
     // AI cost stack breakdown
     const aiStack = [
-      { name: "Orchestration / Platform", value: aiOrchestration, color: "#a855f7" },
-      { name: "Text-to-Speech (TTS)", value: aiTTS, color: "#8b5cf6" },
-      { name: "Speech-to-Text (STT)", value: aiSTT, color: "#6366f1" },
-      { name: "LLM Inference", value: aiLLM, color: "#3b82f6" },
-      { name: "SIP Trunking", value: aiSIP, color: "#06b6d4" },
-      { name: "Compliance / PII", value: aiCompliance, color: "#0891b2" },
+      { name: "Orchestration / Platform", value: aiOrchestration, color: "#794EC2" },
+      { name: "Text-to-Speech (TTS)", value: aiTTS, color: "#8F68D3" },
+      { name: "Speech-to-Text (STT)", value: aiSTT, color: "#8F68D3" },
+      { name: "LLM Inference", value: aiLLM, color: "#794EC2" },
+      { name: "SIP Trunking", value: aiSIP, color: "#8F68D3" },
+      { name: "Compliance / PII", value: aiCompliance, color: "#794EC2" },
     ];
 
     // Volume sensitivity sweep (classic mode) — sweep volume ±  from current
@@ -611,47 +611,59 @@ export default function Calculator() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: "#0a0b0f",
-      fontFamily: "'DM Sans', system-ui, sans-serif", color: "#e2e0e7",
+      minHeight: "100vh", background: "#27133A",
+      fontFamily: "'Inter', system-ui, sans-serif", color: "#FFFFFF",
     }}>
       {/* Header */}
       <div className="calc-header" style={{
-        borderBottom: "1px solid #1e1f2e", padding: "18px 32px",
+        borderBottom: "1px solid #4D1F3B", padding: "18px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: "#0d0e14",
+        background: "#2E1740",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 8, background: "#a855f7",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, fontWeight: 800, color: "#fff",
-          }}>S</div>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>
-              ShyftOff ROI Calculator
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          {/* Official ShyftOff primary logo — inline SVG from the brand skill.
+              Dark-background variant: wordmark fill swapped to #FFFFFF; the
+              rocket icon's gradient is brand-locked and stays untouched. */}
+          <svg
+            width="148" height="36" viewBox="0 0 237 58"
+            fill="none" xmlns="http://www.w3.org/2000/svg"
+            aria-label="ShyftOff"
+            style={{ flexShrink: 0 }}
+          >
+            <path d="M127.282 37.2129L132.318 22.7188H139.932L125.911 57.6475H118.337L123.616 45.4805L114.192 22.7188H121.884L127.282 37.2129ZM75.1146 15.9141C78.281 15.9141 80.7983 16.7055 82.6664 18.2881C84.5345 19.8707 85.5935 22.0486 85.8431 24.8213H78.3881C78.3013 23.9388 77.9406 23.1107 77.3617 22.4658C77.0641 22.1703 76.7124 21.941 76.3285 21.792C75.9447 21.643 75.5359 21.5773 75.1273 21.5986C74.4186 21.5648 73.7226 21.8055 73.1713 22.2754C72.9143 22.5286 72.7141 22.8388 72.5853 23.1836C72.4565 23.5285 72.4027 23.8999 72.4271 24.2695C72.4152 24.9393 72.6539 25.5874 73.0922 26.0732C73.5663 26.5887 74.1344 26.9984 74.7621 27.2783C75.4362 27.589 76.4009 27.9883 77.6654 28.4658C79.2 28.986 80.6955 29.6271 82.1381 30.3848C83.325 31.0525 84.3457 32.006 85.1166 33.167C85.9507 34.3818 86.3656 35.9646 86.3627 37.915C86.3755 39.4549 85.9787 40.9683 85.2172 42.2832L85.0599 42.5518C84.2522 43.8092 83.1386 44.8183 81.8334 45.4727C80.1421 46.3105 78.2868 46.7177 76.4183 46.6602C73.2197 46.6601 70.5867 45.8404 68.5189 44.2021C66.451 42.5638 65.3231 40.2764 65.1351 37.3398H72.4662C72.5226 38.3491 72.9327 39.3007 73.6166 40.0107C74.3006 40.6713 75.2045 41.0211 76.1322 40.9844C76.8975 41.0292 77.649 40.7558 78.225 40.2236C78.4828 39.9612 78.6846 39.6439 78.8168 39.293C78.9489 38.9421 79.0086 38.5655 78.9916 38.1885C79.0018 37.8367 78.9447 37.4863 78.8236 37.1582C78.7025 36.83 78.5198 36.5307 78.2865 36.2783C77.7811 35.7471 77.1829 35.3235 76.5248 35.0312C75.8242 34.7067 74.8586 34.3167 73.6205 33.8623C72.1126 33.3406 70.6407 32.7103 69.2152 31.9756C68.0382 31.3382 67.0275 30.4064 66.2719 29.2627C65.4524 28.0634 65.0424 26.5027 65.0424 24.5801C64.9985 22.9301 65.4503 21.3075 66.3334 19.9434C67.2271 18.61 68.4636 17.572 69.8978 16.9521C71.5505 16.2327 73.3265 15.8797 75.1146 15.9141ZM190.129 15.9268C192.679 15.9268 195.187 16.6048 197.421 17.8975L197.823 18.1523C199.808 19.4354 201.453 21.2319 202.598 23.374C203.846 25.8053 204.499 28.5249 204.499 31.2881C204.499 34.0515 203.846 36.7717 202.598 39.2031C201.373 41.4963 199.578 43.3948 197.404 44.6934C195.177 45.9853 192.676 46.6631 190.133 46.6631C187.591 46.6631 185.09 45.9852 182.864 44.6934C180.679 43.3976 178.873 41.4968 177.642 39.1982C176.387 36.7694 175.73 34.0487 175.73 31.2842C175.73 28.5194 176.387 25.7982 177.642 23.3691C178.872 21.0852 180.668 19.1941 182.837 17.8975C185.071 16.6049 187.58 15.9268 190.129 15.9268ZM153.703 13.2686C154.346 13.2686 154.831 13.2688 155.153 13.3105V19.542L154.404 19.5C153.28 19.5 152.456 19.7556 151.95 20.2656C151.443 20.7756 151.156 21.5914 151.103 22.7227H155.17V28.8242H151.09V46.375H144.217V28.8242H141.516V22.7227H144.217V22.4678C144.217 19.5281 145.023 17.261 146.654 15.666C148.284 14.0711 150.619 13.2686 153.703 13.2686ZM218.684 13.2686C219.331 13.2686 219.811 13.2689 220.137 13.3105V19.542L219.379 19.5C218.252 19.5001 217.432 19.7556 216.921 20.2656C216.41 20.7756 216.128 21.5914 216.076 22.7227H220.146V28.8242H216.076V46.375H209.198V28.8242H206.496V22.7227H209.198V22.4678C209.198 19.5281 210.01 17.261 211.634 15.666C213.259 14.071 215.609 13.2716 218.684 13.2686ZM234.574 13.2686C235.217 13.2686 235.701 13.2688 236.023 13.3105V19.542L235.279 19.5C234.151 19.5 233.331 19.7556 232.82 20.2656C232.309 20.7757 232.027 21.5915 231.974 22.7227H236.045V28.8242H231.974V46.375H225.087V28.8242H222.386V22.7227H225.087V22.4678C225.087 19.5282 225.9 17.261 227.524 15.666C229.148 14.071 231.498 13.2716 234.574 13.2686ZM97.0785 27.0596C97.7045 25.6684 98.7066 24.5026 99.9594 23.708C101.317 22.8645 102.873 22.4381 104.45 22.4785C107.028 22.4785 109.076 23.3832 110.591 25.1914L110.867 25.5244C112.199 27.2992 112.867 29.6702 112.87 32.6377V46.3721H105.983V33.4863C105.983 31.9039 105.586 30.6676 104.793 29.7773C104.387 29.3306 103.894 28.9803 103.348 28.75C102.803 28.5198 102.216 28.4142 101.629 28.4414C101.013 28.4093 100.398 28.5169 99.8246 28.7568C99.2515 28.9968 98.7337 29.3642 98.307 29.833C97.4878 30.7603 97.0785 32.0956 97.0785 33.8154V46.3623H90.1918V15.0049H97.0785V27.0596ZM168.009 22.7207H172.521V28.8271H168V37.6367C168 38.5639 168.181 39.213 168.542 39.584C168.904 39.9549 169.516 40.1357 170.375 40.1357L172.552 40.1309V46.3633H169.468C166.825 46.3633 164.777 45.678 163.326 44.3086C161.875 42.9392 161.14 40.6702 161.122 37.502V28.8271H158.1V22.7207H161.122V16.9102H168.009V22.7207ZM190.112 22.6826C187.859 22.6826 186.065 23.4555 184.732 25.001L184.49 25.2744C183.321 26.7879 182.737 28.7863 182.74 31.2695C182.743 33.9186 183.407 36.0116 184.732 37.5479C186.062 39.0934 187.856 39.8662 190.112 39.8662C192.367 39.8661 194.151 39.0932 195.464 37.5479C196.807 36.0023 197.478 33.9094 197.478 31.2695C197.478 28.6299 196.814 26.5403 195.487 25.001C194.156 23.4555 192.364 22.6827 190.112 22.6826Z" fill="#FFFFFF"/>
+            <path d="M21.0342 44.8701C21.6001 44.8702 22.1428 45.1071 22.543 45.5283C22.9431 45.9495 23.1679 46.5206 23.168 47.1162C23.168 47.712 22.9432 48.2838 22.543 48.7051L14.6914 56.9648C14.4937 57.1735 14.2586 57.3392 14 57.4521C13.7415 57.565 13.4644 57.623 13.1846 57.623C12.9047 57.623 12.6277 57.565 12.3691 57.4521C12.1106 57.3392 11.8754 57.1735 11.6777 56.9648C11.2783 56.5433 11.0538 55.9723 11.0537 55.377C11.0537 54.7814 11.2782 54.2098 11.6777 53.7881L19.5244 45.5283C19.9246 45.107 20.4682 44.8701 21.0342 44.8701ZM17.4482 37.2637C17.7282 37.2635 18.0059 37.321 18.2646 37.4336C18.5234 37.5461 18.7589 37.7108 18.957 37.9189C19.1552 38.1272 19.3126 38.3753 19.4199 38.6475C19.5272 38.9196 19.5828 39.2113 19.583 39.5059C19.5832 39.8006 19.5279 40.0929 19.4209 40.3652C19.3139 40.6374 19.1567 40.8844 18.959 41.0928L6.96191 53.7188C6.76411 53.9272 6.52904 54.0931 6.27051 54.2061C6.01185 54.319 5.73416 54.3777 5.4541 54.3779C5.17405 54.3781 4.89651 54.3196 4.6377 54.207C4.37898 54.0944 4.14342 53.9299 3.94531 53.7217C3.74714 53.5134 3.58978 53.2654 3.48242 52.9932C3.3752 52.7211 3.32052 52.4293 3.32031 52.1348C3.32012 51.8403 3.3746 51.5486 3.48145 51.2764C3.58838 51.0041 3.74559 50.7563 3.94336 50.5479L15.9414 37.9219C16.1393 37.7133 16.3742 37.5476 16.6328 37.4346C16.8913 37.3217 17.1684 37.2639 17.4482 37.2637ZM53.9551 0C54.2833 -0.000610815 54.6088 0.0673181 54.9121 0.199219C55.2155 0.331123 55.4915 0.524305 55.7236 0.768555C55.9557 1.01274 56.1393 1.30293 56.2646 1.62207C56.39 1.94128 56.4547 2.28353 56.4541 2.62891C56.4803 8.31548 55.4336 13.9512 53.375 19.209C51.3163 24.4667 48.2862 29.2424 44.4609 33.2588L39.4814 37.8408L41.8613 37.0615C42.0229 37.0089 42.1951 37.0032 42.3594 37.0459C42.5237 37.0887 42.6742 37.1777 42.7939 37.3037C42.9136 37.4296 42.9984 37.5879 43.0391 37.7607C43.0797 37.9336 43.0744 38.1151 43.0244 38.2852L39.7949 49.5713L39.6758 50.0068C39.4068 50.9383 38.895 51.7725 38.1992 52.4141C37.5035 53.0555 36.6509 53.4795 35.7383 53.6377C34.8258 53.7958 33.8894 53.6821 33.0352 53.3096C32.1807 52.9368 31.442 52.3196 30.9033 51.5283L27.2812 46.1543L24.3203 41.7676C22.2229 38.8291 19.7515 36.2075 16.9756 33.9775L12.6533 30.7324L7.5332 26.9072C6.78075 26.3417 6.19393 25.5654 5.83887 24.667C5.48383 23.7686 5.37494 22.7835 5.52441 21.8232C5.6739 20.863 6.07565 19.9657 6.68457 19.2334C7.29348 18.5012 8.08518 17.963 8.96973 17.6797L9.38867 17.5635L20.1084 14.1514C20.2703 14.1016 20.4421 14.0984 20.6055 14.1426C20.7687 14.1867 20.9172 14.2767 21.0361 14.4023C21.1552 14.5281 21.2399 14.6853 21.2812 14.8574C21.3225 15.0294 21.3194 15.2098 21.2715 15.3799L20.5273 17.8789L24.8672 12.6396C28.6643 8.62513 33.1793 5.44082 38.1514 3.27148C43.1233 1.10227 48.4546 -0.00947152 53.8369 0H53.9551ZM9.98047 34.0361C10.5463 34.0363 11.0891 34.2732 11.4893 34.6943C11.8893 35.1156 12.1142 35.6866 12.1143 36.2822C12.1143 36.878 11.8895 37.4498 11.4893 37.8711L3.6416 46.1309C3.24205 46.552 2.70019 46.7895 2.13477 46.79C1.56929 46.7905 1.02618 46.5543 0.625977 46.1338C0.225837 45.7132 0.000515481 45.1421 0 44.5469C-0.000413147 43.9515 0.224398 43.3803 0.624023 42.959L8.4707 34.6943C8.87093 34.273 9.41446 34.0361 9.98047 34.0361ZM45.7949 8.34375C44.6926 7.8624 43.4655 7.79751 42.3232 8.16113C41.1811 8.52479 40.1942 9.29438 39.5303 10.3379C38.8664 11.3815 38.5669 12.6348 38.6826 13.8848C38.7983 15.1347 39.3222 16.3042 40.165 17.1934C41.1337 18.2129 42.4473 18.7865 43.8174 18.7881C45.0107 18.7881 46.1673 18.353 47.0898 17.5566C48.0124 16.7602 48.6437 15.6514 48.877 14.4199C49.1102 13.1882 48.9312 11.9087 48.3691 10.8008C47.8071 9.69307 46.8971 8.82507 45.7949 8.34375Z" fill="url(#paint0_radial_7449_19022)"/>
+            <defs>
+              <radialGradient id="paint0_radial_7449_19022" cx="0" cy="0" r="1" gradientTransform="matrix(-56.7785 48.9316 -48.729 -38.8907 50.3001 48.2113)" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#FF66C4"/>
+                <stop offset="0.423077" stopColor="#FF7866"/>
+                <stop offset="1" stopColor="#C5AFE9"/>
+              </radialGradient>
+            </defs>
+          </svg>
+          <div style={{ borderLeft: "1px solid #4D1F3B", paddingLeft: 16 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#FFFFFF", letterSpacing: "0.01em" }}>
+              ROI Calculator
             </div>
-            <div style={{ fontSize: 12, color: "#6b6878" }}>
-              {showAI
-                ? "Pre vs. post-AI economics — traditional contact center vs. ShyftOff"
-                : "Compare traditional contact center vs. ShyftOff"}
+            <div style={{ fontSize: 12, color: "#FF7866", fontWeight: 500 }}>
+              Insanely Easy Contact Center Ops
             </div>
           </div>
         </div>
         <div className="calc-header-controls" style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {/* Simple / Detailed segmented control */}
           <div style={{
-            display: "inline-flex", background: "#13141a", border: "1px solid #2a2b3d",
+            display: "inline-flex", background: "#1F0E2F", border: "1px solid #5D2F4B",
             borderRadius: 6, padding: 2,
           }}>
             {["simple", "detailed"].map((m) => (
               <button key={m}
                 onClick={() => setMode(m)}
                 style={{
-                  background: mode === m ? "#1a1228" : "transparent",
-                  border: mode === m ? "1px solid #a855f7" : "1px solid transparent",
-                  color: mode === m ? "#a855f7" : "#6b6878",
+                  background: mode === m ? "#3D2050" : "transparent",
+                  border: mode === m ? "1px solid #794EC2" : "1px solid transparent",
+                  color: mode === m ? "#794EC2" : "#C9C1D6",
                   borderRadius: 4, padding: "4px 12px", fontSize: 11, fontWeight: 600,
-                  cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                  cursor: "pointer", fontFamily: "'Inter', sans-serif",
                   textTransform: "capitalize",
                 }}
               >
@@ -662,11 +674,11 @@ export default function Calculator() {
           <button
             onClick={() => setShowAI(!showAI)}
             style={{
-              background: showAI ? "#1a1228" : "#13141a",
-              border: `1px solid ${showAI ? "#a855f7" : "#2a2b3d"}`,
-              color: showAI ? "#a855f7" : "#8a8891",
+              background: showAI ? "#3D2050" : "#1F0E2F",
+              border: `1px solid ${showAI ? "#794EC2" : "#5D2F4B"}`,
+              color: showAI ? "#794EC2" : "#C9C1D6",
               borderRadius: 6, padding: "6px 14px", fontSize: 12, fontWeight: 600,
-              cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+              cursor: "pointer", fontFamily: "'Inter', sans-serif",
             }}
           >
             {showAI ? "✓ AI scenarios on" : "+ Add AI scenarios"}
@@ -688,11 +700,11 @@ export default function Calculator() {
 
             {/* Inputs */}
             <div style={{
-              background: "#0d0e14", border: "1px solid #1e1f2e", borderRadius: 12,
+              background: "#2E1740", border: "1px solid #4D1F3B", borderRadius: 12,
               padding: "22px 26px", marginBottom: 22,
             }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
-                textTransform: "uppercase", color: "#a855f7", marginBottom: 16 }}>
+                textTransform: "uppercase", color: "#794EC2", marginBottom: 16 }}>
                 Inputs
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -712,13 +724,13 @@ export default function Calculator() {
               <div style={{ marginTop: 14 }}>
                 <InputRow label="ShyftOff Rate" hint="flat loaded, $/hr">
                   <div style={{
-                    background: "#1a1228", border: "1px solid #a855f7", borderRadius: 6,
+                    background: "#3D2050", border: "1px solid #794EC2", borderRadius: 6,
                     padding: "7px 10px", display: "flex", justifyContent: "space-between",
                     alignItems: "center",
                   }}>
-                    <span style={{ fontSize: 11, color: "#8a8891" }}>ShyftOff Standard</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "#a855f7",
-                      fontFamily: "'Space Mono', monospace" }}>
+                    <span style={{ fontSize: 11, color: "#C9C1D6" }}>ShyftOff Standard</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#794EC2",
+                      fontFamily: "'Inter', sans-serif" }}>
                       ${fmtD(results.s1.gigRate, 2)}/hr
                     </span>
                   </div>
@@ -728,7 +740,7 @@ export default function Calculator() {
               {showAI ? (
                 <div style={{ marginTop: 6 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
-                    textTransform: "uppercase", color: "#a855f7", marginBottom: 10 }}>
+                    textTransform: "uppercase", color: "#794EC2", marginBottom: 10 }}>
                     AI Tier
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
@@ -736,16 +748,16 @@ export default function Calculator() {
                       const active = selectedTier === key;
                       return (
                         <button key={key} onClick={() => applyPreset(key)} style={{
-                          background: active ? "#1a1228" : "#0a0b0f",
-                          border: `1px solid ${active ? preset.color : "#2a2b3d"}`,
+                          background: active ? "#3D2050" : "#27133A",
+                          border: `1px solid ${active ? preset.color : "#5D2F4B"}`,
                           borderRadius: 7, padding: "9px 8px", cursor: "pointer",
                           textAlign: "center",
                         }}>
                           <div style={{ fontSize: 11, fontWeight: 700,
-                            color: active ? preset.color : "#6b6878", lineHeight: 1.2 }}>
+                            color: active ? preset.color : "#C9C1D6", lineHeight: 1.2 }}>
                             {key === "lean" ? "Lean" : key === "standard" ? "Standard" : "Human-like"}
                           </div>
-                          <div style={{ fontSize: 9, color: active ? "#8a8891" : "#4a4855", marginTop: 3 }}>
+                          <div style={{ fontSize: 9, color: active ? "#C9C1D6" : "#9B7FB5", marginTop: 3 }}>
                             {Math.round(preset.defaultContainment * 100)}% containment
                           </div>
                         </button>
@@ -761,100 +773,100 @@ export default function Calculator() {
                   onClick={() => setShowAI(true)}
                   style={{
                     width: "100%", marginTop: 8, background: "transparent",
-                    border: "1px dashed #2a2b3d", borderRadius: 8,
+                    border: "1px dashed #5D2F4B", borderRadius: 8,
                     padding: "10px 12px", cursor: "pointer",
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Inter', sans-serif",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                     transition: "all 120ms",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "#a855f7";
-                    e.currentTarget.style.background = "#0d0814";
+                    e.currentTarget.style.borderColor = "#794EC2";
+                    e.currentTarget.style.background = "#1F0E2F";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "#2a2b3d";
+                    e.currentTarget.style.borderColor = "#5D2F4B";
                     e.currentTarget.style.background = "transparent";
                   }}
                 >
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#a855f7" }}>+ Add AI scenarios</span>
-                  <span style={{ fontSize: 10, color: "#6b6878" }}>see post-AI economics + tier picker</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "#794EC2" }}>+ Add AI scenarios</span>
+                  <span style={{ fontSize: 10, color: "#C9C1D6" }}>see post-AI economics + tier picker</span>
                 </button>
               )}
             </div>
 
             {/* Savings hero */}
             <div style={{
-              background: "linear-gradient(135deg, #1a1228 0%, #0f0a1e 100%)",
-              border: "1px solid #a855f7", borderRadius: 14,
+              background: "linear-gradient(135deg, #3D2050 0%, #1F0E2F 100%)",
+              border: "1px solid #794EC2", borderRadius: 14,
               padding: "32px 36px", textAlign: "center",
               boxShadow: "0 0 40px rgba(168,85,247,0.12)", marginBottom: 18,
             }}>
-              <div style={{ fontSize: 11, color: "#8a8891", marginBottom: 10,
+              <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 10,
                 letterSpacing: "0.08em", textTransform: "uppercase" }}>
                 {showAI ? "Monthly savings — ShyftOff + AI vs Traditional" : "Monthly savings — ShyftOff vs Traditional"}
               </div>
-              <div style={{ fontSize: 52, fontWeight: 900, color: "#22c55e",
-                fontFamily: "Space Mono, monospace", lineHeight: 1 }}>
+              <div style={{ fontSize: 52, fontWeight: 900, color: "#FF7866",
+                fontFamily: "Inter, sans-serif", lineHeight: 1 }}>
                 {fmtCur(monthlySavings)}
               </div>
-              <div style={{ fontSize: 15, color: "#a855f7", marginTop: 8, fontWeight: 600 }}>
+              <div style={{ fontSize: 15, color: "#794EC2", marginTop: 8, fontWeight: 600 }}>
                 {fmtD(savingsPct * 100, 1)}% reduction · {fmtCur(monthlySavings * 12)}/yr
               </div>
 
               {/* Trad vs ShyftOff side-by-side */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24,
-                marginTop: 28, paddingTop: 22, borderTop: "1px solid #2a1f3d" }}>
+                marginTop: 28, paddingTop: 22, borderTop: "1px solid #4D1F3B" }}>
                 <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 10, color: "#6b6878", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  <div style={{ fontSize: 10, color: "#C9C1D6", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                     Traditional
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: "#ef4444",
-                    fontFamily: "Space Mono, monospace", marginTop: 4 }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: "#FF66C4",
+                    fontFamily: "Inter, sans-serif", marginTop: 4 }}>
                     {fmtCur(monthlyTrad)}
                   </div>
-                  <div style={{ fontSize: 10, color: "#4a4855", marginTop: 2 }}>per month</div>
+                  <div style={{ fontSize: 10, color: "#9B7FB5", marginTop: 2 }}>per month</div>
                 </div>
                 <div style={{ textAlign: "left" }}>
-                  <div style={{ fontSize: 10, color: "#6b6878", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  <div style={{ fontSize: 10, color: "#C9C1D6", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                     ShyftOff{showAI ? " + AI" : ""}
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: "#22c55e",
-                    fontFamily: "Space Mono, monospace", marginTop: 4 }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: "#FF7866",
+                    fontFamily: "Inter, sans-serif", marginTop: 4 }}>
                     {fmtCur(monthlyShyft)}
                   </div>
-                  <div style={{ fontSize: 10, color: "#4a4855", marginTop: 2 }}>per month</div>
+                  <div style={{ fontSize: 10, color: "#9B7FB5", marginTop: 2 }}>per month</div>
                 </div>
               </div>
             </div>
 
             {/* Coverage delta — missed-call recovery proxy (interval-coverage) */}
             <div style={{
-              background: "#0d0e14", border: "1px solid #1e1f2e", borderRadius: 12,
+              background: "#2E1740", border: "1px solid #4D1F3B", borderRadius: 12,
               padding: "18px 24px", marginBottom: 22,
             }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
-                textTransform: "uppercase", color: "#a855f7", marginBottom: 8 }}>
+                textTransform: "uppercase", color: "#794EC2", marginBottom: 8 }}>
                 Coverage Recovery
               </div>
-              <div style={{ fontSize: 14, color: "#e2e0e7", lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, color: "#FFFFFF", lineHeight: 1.5 }}>
                 ShyftOff covers{" "}
-                <strong style={{ color: "#22c55e", fontFamily: "'Space Mono', monospace" }}>
+                <strong style={{ color: "#FF7866", fontFamily: "'Inter', sans-serif" }}>
                   {results.underStaffedIntervalsWeek}
                 </strong>{" "}
                 more intervals/week than the traditional shift-block schedule.
               </div>
-              <div style={{ fontSize: 11, color: "#6b6878", marginTop: 6, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 11, color: "#C9C1D6", marginTop: 6, lineHeight: 1.5 }}>
                 Traditional under-staffs {results.underStaffedIntervalsDay} interval{results.underStaffedIntervalsDay === 1 ? "" : "s"}
                 {" "}per operating day; ShyftOff matches required staffing every interval.
               </div>
             </div>
 
             {/* Switch-to-detailed hint */}
-            <div style={{ textAlign: "center", fontSize: 11, color: "#4a4855" }}>
+            <div style={{ textAlign: "center", fontSize: 11, color: "#9B7FB5" }}>
               Switch to{" "}
               <button onClick={() => setMode("detailed")} style={{
-                background: "none", border: "none", color: "#a855f7", cursor: "pointer",
-                fontWeight: 700, fontSize: 11, fontFamily: "'DM Sans', sans-serif",
+                background: "none", border: "none", color: "#794EC2", cursor: "pointer",
+                fontWeight: 700, fontSize: 11, fontFamily: "'Inter', sans-serif",
                 padding: 0, textDecoration: "underline",
               }}>Detailed</button>
               {" "}to drill into staffing, shrinkage, Erlang C math, and the AI cost stack.
@@ -869,8 +881,8 @@ export default function Calculator() {
 
         {/* ── Left: Inputs ───────────────────────────────────────────────────── */}
         <div className="calc-inputs" style={{
-          borderRight: "1px solid #1e1f2e", padding: "24px 20px",
-          overflowY: "auto", background: "#0d0e14",
+          borderRight: "1px solid #4D1F3B", padding: "24px 20px",
+          overflowY: "auto", background: "#2E1740",
         }}>
 
           <SectionLabel>Contact Center</SectionLabel>
@@ -892,14 +904,14 @@ export default function Calculator() {
           <InputRow label="Shrinkage" hint={`total ${inputs.inCenterShrink + inputs.outOfCenterShrink}% · ↑ shrink = ↑ trad cost`} tooltip="Time agents are paid but unavailable for calls. In-Center = breaks, lunch, coaching, system meetings. Out-of-Center = training, PTO, sick. Industry standard 30–35%. ShyftOff carries its own utilization adjustment, not this number — that's where the structural cost gap comes from.">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               <div>
-                <div style={{ fontSize: 10, color: "#4a4855", marginBottom: 4 }}>In-Center</div>
+                <div style={{ fontSize: 10, color: "#9B7FB5", marginBottom: 4 }}>In-Center</div>
                 <NumInput value={inputs.inCenterShrink} onChange={(v) => set("inCenterShrink", v)} min={0} max={50} suffix="%" />
-                <div style={{ fontSize: 9, color: "#3a3b4d", marginTop: 3 }}>breaks · lunch · coaching</div>
+                <div style={{ fontSize: 9, color: "#7A5A8E", marginTop: 3 }}>breaks · lunch · coaching</div>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: "#4a4855", marginBottom: 4 }}>Out-of-Center</div>
+                <div style={{ fontSize: 10, color: "#9B7FB5", marginBottom: 4 }}>Out-of-Center</div>
                 <NumInput value={inputs.outOfCenterShrink} onChange={(v) => set("outOfCenterShrink", v)} min={0} max={50} suffix="%" />
-                <div style={{ fontSize: 9, color: "#3a3b4d", marginTop: 3 }}>training · PTO · sick</div>
+                <div style={{ fontSize: 9, color: "#7A5A8E", marginTop: 3 }}>training · PTO · sick</div>
               </div>
             </div>
           </InputRow>
@@ -908,9 +920,9 @@ export default function Calculator() {
               value={arrivalKey}
               onChange={(e) => setArrivalKey(e.target.value)}
               style={{
-                width: "100%", background: "#0d0e14", border: "1px solid #2a2b3d", color: "#e2e0e7",
+                width: "100%", background: "#2E1740", border: "1px solid #5D2F4B", color: "#FFFFFF",
                 borderRadius: 6, padding: "7px 10px", fontSize: 13,
-                fontFamily: "'DM Sans', sans-serif", cursor: "pointer", outline: "none",
+                fontFamily: "'Inter', sans-serif", cursor: "pointer", outline: "none",
               }}
             >
               {Object.entries(ARRIVAL_PRESETS).map(([key, p]) => (
@@ -925,16 +937,16 @@ export default function Calculator() {
                 ["Fri", "dowFri"], ["Sat", "dowSat"], ["Sun", "dowSun"],
               ].map(([label, key]) => (
                 <div key={key} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 9, color: "#4a4855", marginBottom: 3, fontWeight: 600,
-                    color: inputs[key] === 0 ? "#2a2b3d" : "#6b6878" }}>{label}</div>
+                  <div style={{ fontSize: 9, color: "#9B7FB5", marginBottom: 3, fontWeight: 600,
+                    color: inputs[key] === 0 ? "#5D2F4B" : "#C9C1D6" }}>{label}</div>
                   <input type="number" value={inputs[key]} min={0} max={30} step={0.5}
                     onChange={(e) => set(key, parseFloat(e.target.value) || 0)}
                     style={{
-                      width: "100%", background: inputs[key] === 0 ? "#0a0b0f" : "#0d0e14",
-                      border: `1px solid ${inputs[key] === 0 ? "#1a1b26" : "#2a2b3d"}`,
-                      borderRadius: 5, color: inputs[key] === 0 ? "#2a2b3d" : "#e2e0e7",
+                      width: "100%", background: inputs[key] === 0 ? "#27133A" : "#2E1740",
+                      border: `1px solid ${inputs[key] === 0 ? "#1F0E2F" : "#5D2F4B"}`,
+                      borderRadius: 5, color: inputs[key] === 0 ? "#5D2F4B" : "#FFFFFF",
                       padding: "5px 3px", fontSize: 11, textAlign: "center",
-                      fontFamily: "'Space Mono', monospace", outline: "none",
+                      fontFamily: "'Inter', sans-serif", outline: "none",
                     }} />
                 </div>
               ))}
@@ -942,7 +954,7 @@ export default function Calculator() {
           </InputRow>
           </>)}
 
-          <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
+          <div style={{ borderTop: "1px solid #4D1F3B", margin: "16px 0" }} />
           <SectionLabel>Service Level</SectionLabel>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <InputRow label="SL Target" tooltip="Service Level: 'X% of calls answered in Y seconds.' Industry default is 80/20 — 80% answered within 20 seconds. Drives the Erlang C staffing requirement: tighter SL ⇒ more agents needed."  >
@@ -962,8 +974,8 @@ export default function Calculator() {
                 // position along the track. The -14px nudge centers the
                 // label over the thumb (label is ~28px wide for 2-digit %).
                 left: `calc(${((inputs.maxOccupancy - 1) / 98) * 100}% - 14px)`,
-                fontSize: 12, fontWeight: 700, color: "#a855f7",
-                fontFamily: "Space Mono, monospace",
+                fontSize: 12, fontWeight: 700, color: "#794EC2",
+                fontFamily: "Inter, sans-serif",
                 transition: "left 80ms linear",
                 pointerEvents: "none",
               }}>
@@ -972,7 +984,7 @@ export default function Calculator() {
             </div>
             <Slider value={inputs.maxOccupancy} onChange={(v) => set("maxOccupancy", v)} min={1} max={99} />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
-              <span style={{ fontSize: 10, color: results.slWarning ? "#f59e0b" : "#22c55e" }}>
+              <span style={{ fontSize: 10, color: results.slWarning ? "#FFE566" : "#FF7866" }}>
                 achieved SL: {Math.round(results.achievedSL * 100)}%
                 {results.slWarning
                   ? <> · ⚠ below target — occ-driven staffing dropping SL</>
@@ -984,9 +996,9 @@ export default function Calculator() {
                   onClick={() => set("maxOccupancy", results.naturalMaxOccPct)}
                   title={`Reset to natural (${results.naturalMaxOccPct}%) — the highest occ that still meets SL`}
                   style={{
-                    background: "transparent", border: "1px solid #2a2b3d",
-                    borderRadius: 4, color: "#6b6878", padding: "1px 6px",
-                    fontSize: 10, cursor: "pointer", fontFamily: "Space Mono, monospace",
+                    background: "transparent", border: "1px solid #5D2F4B",
+                    borderRadius: 4, color: "#C9C1D6", padding: "1px 6px",
+                    fontSize: 10, cursor: "pointer", fontFamily: "Inter, sans-serif",
                   }}
                 >↻ {results.naturalMaxOccPct}%</button>
               )}
@@ -994,7 +1006,7 @@ export default function Calculator() {
           </InputRow>
           )}
 
-          <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
+          <div style={{ borderTop: "1px solid #4D1F3B", margin: "16px 0" }} />
           <SectionLabel>Human Cost Model</SectionLabel>
           <InputRow label="Agent Rate" hint="$/hr">
             <NumInput value={inputs.traditionalRate} onChange={(v) => set("traditionalRate", v)} min={10} step={0.5} prefix="$" suffix="/hr" />
@@ -1022,10 +1034,10 @@ export default function Calculator() {
           </div>
 
           <div style={{
-            background: "#0a0b0f", border: "1px solid #1e1f2e", borderRadius: 8,
+            background: "#27133A", border: "1px solid #4D1F3B", borderRadius: 8,
             padding: "12px 14px", marginBottom: 14,
           }}>
-            <div style={{ fontSize: 10, color: "#6b6878", fontWeight: 600, marginBottom: 8,
+            <div style={{ fontSize: 10, color: "#C9C1D6", fontWeight: 600, marginBottom: 8,
               textTransform: "uppercase", letterSpacing: "0.06em" }}>Support staffing ratios (1 per N agents)</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
               <InputRow label="Sup">
@@ -1038,7 +1050,7 @@ export default function Calculator() {
                 <NumInput value={inputs.agentsPerWfm} onChange={(v) => set("agentsPerWfm", v)} min={1} max={500} />
               </InputRow>
             </div>
-            <div style={{ fontSize: 10, color: "#6b6878", fontWeight: 600, marginTop: 6, marginBottom: 6,
+            <div style={{ fontSize: 10, color: "#C9C1D6", fontWeight: 600, marginTop: 6, marginBottom: 6,
               textTransform: "uppercase", letterSpacing: "0.06em" }}>Annual salary ($)</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
               <InputRow label="Sup">
@@ -1065,13 +1077,13 @@ export default function Calculator() {
 
           <InputRow label="ShyftOff Rate" hint="flat loaded rate, no AI-tier or volume adjustment" tooltip="Interval matching: traditional centers staff full shifts, which over-cover slow intervals and under-cover peaks. ShyftOff staffs interval-by-interval — agents log in for the windows you actually need. The flat $/hr rate already loads benefits, supervision, and platform — no extras.">
             <div style={{
-              background: "#1a1228", border: "1px solid #a855f7", borderRadius: 6,
+              background: "#3D2050", border: "1px solid #794EC2", borderRadius: 6,
               padding: "10px 12px", display: "flex", justifyContent: "space-between",
               alignItems: "center",
             }}>
-              <span style={{ fontSize: 11, color: "#8a8891" }}>ShyftOff Standard</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#a855f7",
-                fontFamily: "'Space Mono', monospace" }}>
+              <span style={{ fontSize: 11, color: "#C9C1D6" }}>ShyftOff Standard</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#794EC2",
+                fontFamily: "'Inter', sans-serif" }}>
                 ${fmtD(results.s1.gigRate, 2)}/hr
               </span>
             </div>
@@ -1086,18 +1098,18 @@ export default function Calculator() {
             onClick={() => setShowAdvanced(!showAdvanced)}
             style={{
               width: "100%", background: "transparent",
-              border: "1px dashed #2a2b3d", borderRadius: 6,
-              color: "#6b6878", padding: "8px 10px", marginTop: 4,
+              border: "1px dashed #5D2F4B", borderRadius: 6,
+              color: "#C9C1D6", padding: "8px 10px", marginTop: 4,
               fontSize: 11, fontWeight: 600, cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Inter', sans-serif",
               display: "flex", alignItems: "center", justifyContent: "center",
               gap: 6, transition: "all 120ms",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = "#a855f7"; e.currentTarget.style.borderColor = "#a855f7"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = "#6b6878"; e.currentTarget.style.borderColor = "#2a2b3d"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = "#794EC2"; e.currentTarget.style.borderColor = "#794EC2"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = "#C9C1D6"; e.currentTarget.style.borderColor = "#5D2F4B"; }}
           >
             <span>{showAdvanced ? "− Hide advanced" : "+ Show advanced"}</span>
-            <span style={{ fontSize: 9, color: "#4a4855" }}>
+            <span style={{ fontSize: 9, color: "#9B7FB5" }}>
               {showAdvanced
                 ? "(collapses shrinkage, ratios, salaries, etc.)"
                 : "(shrinkage, occupancy, ratios, salaries, workstation)"}
@@ -1105,32 +1117,32 @@ export default function Calculator() {
           </button>
 
           {showAI && (<>
-          <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
+          <div style={{ borderTop: "1px solid #4D1F3B", margin: "16px 0" }} />
           <SectionLabel>AI Configuration</SectionLabel>
           <InputRow label="AI Containment Rate" hint="% of calls AI fully resolves" tooltip="% of contacts AI fully resolves without a human. Gartner Oct 2025 (n=321): industry median ~50%, top quartile 70%+. Tier midpoints — Lean 32.5% (FAQ deflection), Standard 52.5% (multi-turn NLU), Human-like 72.5% (conversational).">
-            <Slider value={Math.round(inputs.containmentRate * 100)} onChange={(v) => set("containmentRate", v / 100)} min={25} max={95} color="#a855f7" />
+            <Slider value={Math.round(inputs.containmentRate * 100)} onChange={(v) => set("containmentRate", v / 100)} min={25} max={95} color="#794EC2" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>25%</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+              <span style={{ fontSize: 10, color: "#9B7FB5" }}>25%</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                 {Math.round(inputs.containmentRate * 100)}%
               </span>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>95%</span>
+              <span style={{ fontSize: 10, color: "#9B7FB5" }}>95%</span>
             </div>
-            <div style={{ fontSize: 10, color: "#6b6878", marginTop: 6, lineHeight: 1.4, fontStyle: "italic" }}>
+            <div style={{ fontSize: 10, color: "#C9C1D6", marginTop: 6, lineHeight: 1.4, fontStyle: "italic" }}>
               Gartner survey (Oct 2025, n=321 customer-service leaders): only{" "}
-              <span style={{ color: "#f59e0b", fontWeight: 600 }}>20%</span> cut agent headcount due to AI;{" "}
-              <span style={{ color: "#f59e0b", fontWeight: 600 }}>55%</span> kept staffing stable on higher volumes.
+              <span style={{ color: "#FFE566", fontWeight: 600 }}>20%</span> cut agent headcount due to AI;{" "}
+              <span style={{ color: "#FFE566", fontWeight: 600 }}>55%</span> kept staffing stable on higher volumes.
               Containment ≠ staffing cut — see the gap on the Scenarios tab.
             </div>
           </InputRow>
           <InputRow label="Escalation Rate" hint="% of AI calls that go to human" tooltip="% of AI-handled calls that escalate to a human anyway (failed containment, customer demand, edge cases). Industry band 15–25%. The cascade is: containment × (1 − escalation) = net volume kept off humans.">
-            <Slider value={Math.round(inputs.escalationRate * 100)} onChange={(v) => set("escalationRate", v / 100)} min={5} max={50} color="#f59e0b" />
+            <Slider value={Math.round(inputs.escalationRate * 100)} onChange={(v) => set("escalationRate", v / 100)} min={5} max={50} color="#FFE566" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>5%</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", fontFamily: "Space Mono, monospace" }}>
+              <span style={{ fontSize: 10, color: "#9B7FB5" }}>5%</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#FFE566", fontFamily: "Inter, sans-serif" }}>
                 {Math.round(inputs.escalationRate * 100)}%
               </span>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>50%</span>
+              <span style={{ fontSize: 10, color: "#9B7FB5" }}>50%</span>
             </div>
           </InputRow>
           {/* AHT Variability (CV) and the percentile table were removed in
@@ -1138,22 +1150,22 @@ export default function Calculator() {
               the lib pass-through above. Add them back via the Detailed-mode
               toggle in Round 3 if users want to see / tune the distribution. */}
           <InputRow label="Post-AI Wage Premium (Trad)" hint="Tier-2 vs Tier-1 differential · industry: 20–30% (ZipRecruiter 2026)" tooltip="When AI absorbs Tier-1 (routine) work, the human stream is all Tier-2 (complex). Tier-2 agents cost more — ZipRecruiter 2026 shows 20–30% wage premium over Tier-1. Applies to the traditional base wage only; ShyftOff rate is untouched.">
-            <Slider value={inputs.postAiWagePremium} onChange={(v) => set("postAiWagePremium", v)} min={0} max={80} color="#f59e0b" />
+            <Slider value={inputs.postAiWagePremium} onChange={(v) => set("postAiWagePremium", v)} min={0} max={80} color="#FFE566" />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 3 }}>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>0%</span>
+              <span style={{ fontSize: 10, color: "#9B7FB5" }}>0%</span>
               <div style={{ textAlign: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#f59e0b", fontFamily: "Space Mono, monospace" }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#FFE566", fontFamily: "Inter, sans-serif" }}>
                   +{inputs.postAiWagePremium}%
                 </span>
-                <span style={{ fontSize: 10, color: "#4a4855", marginLeft: 5 }}>
+                <span style={{ fontSize: 10, color: "#9B7FB5", marginLeft: 5 }}>
                   (${fmtD(inputs.traditionalRate * (1 + inputs.postAiWagePremium / 100), 2)}/hr)
                 </span>
               </div>
-              <span style={{ fontSize: 10, color: "#4a4855" }}>80%</span>
+              <span style={{ fontSize: 10, color: "#9B7FB5" }}>80%</span>
             </div>
           </InputRow>
 
-          <div style={{ borderTop: "1px solid #1e1f2e", margin: "16px 0" }} />
+          <div style={{ borderTop: "1px solid #4D1F3B", margin: "16px 0" }} />
           <SectionLabel>AI Cost Stack ($/min)</SectionLabel>
 
           {/* Tier preset selector */}
@@ -1162,21 +1174,21 @@ export default function Calculator() {
               const active = selectedTier === key;
               return (
                 <button key={key} onClick={() => applyPreset(key)} style={{
-                  background: active ? "#1a1228" : "#0d0e14",
-                  border: `1px solid ${active ? preset.color : "#2a2b3d"}`,
+                  background: active ? "#3D2050" : "#2E1740",
+                  border: `1px solid ${active ? preset.color : "#5D2F4B"}`,
                   borderRadius: 7, padding: "7px 6px", cursor: "pointer",
                   textAlign: "center", transition: "all 0.15s",
                 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: active ? preset.color : "#4a4855", lineHeight: 1.2 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: active ? preset.color : "#9B7FB5", lineHeight: 1.2 }}>
                     {key === "lean" ? "Lean" : key === "standard" ? "Standard" : key === "humanlike" ? "Human-like" : key}
                   </div>
-                  <div style={{ fontSize: 9, color: active ? "#8a8891" : "#3a3845", marginTop: 2 }}>{preset.range}/min</div>
+                  <div style={{ fontSize: 9, color: active ? "#C9C1D6" : "#7A5A8E", marginTop: 2 }}>{preset.range}/min</div>
                 </button>
               );
             })}
           </div>
           {selectedTier !== "custom" && (
-            <div style={{ fontSize: 10, color: "#6b6878", marginBottom: 12, lineHeight: 1.4 }}>
+            <div style={{ fontSize: 10, color: "#C9C1D6", marginBottom: 12, lineHeight: 1.4 }}>
               <span style={{ color: TIER_PRESETS[selectedTier].color, fontWeight: 600 }}>
                 {TIER_PRESETS[selectedTier].vendors}
               </span>
@@ -1201,29 +1213,29 @@ export default function Calculator() {
 
           {/* Blended rate summary */}
           <div style={{
-            background: "#1a1228", border: "1px solid #a855f7", borderRadius: 8,
+            background: "#3D2050", border: "1px solid #794EC2", borderRadius: 8,
             padding: "12px 14px", marginTop: 4,
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ fontSize: 11, color: "#8a8891" }}>Blended AI rate</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+              <span style={{ fontSize: 11, color: "#C9C1D6" }}>Blended AI rate</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                 {fmtCurD(results.aiCostPerMin, 4)}/min
               </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 11, color: "#8a8891" }}>Per {inputs.aht}-min call</span>
-              <span style={{ fontSize: 12, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+              <span style={{ fontSize: 11, color: "#C9C1D6" }}>Per {inputs.aht}-min call</span>
+              <span style={{ fontSize: 12, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                 {fmtCurD(results.aiCostPerMin * inputs.aht, 3)}
               </span>
             </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, paddingTop: 6, borderTop: "1px solid #2a1a3d" }}>
-              <span style={{ fontSize: 11, color: "#8a8891" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, paddingTop: 6, borderTop: "1px solid #4D1F3B" }}>
+              <span style={{ fontSize: 11, color: "#C9C1D6" }}>
                 Hourly @ {inputs.maxOccupancy}% occ
-                <span style={{ fontSize: 9, color: "#4a4855", display: "block", marginTop: 1 }}>
+                <span style={{ fontSize: 9, color: "#9B7FB5", display: "block", marginTop: 1 }}>
                   60 min × {inputs.maxOccupancy}% × {fmtCurD(results.aiCostPerMin, 4)}/min
                 </span>
               </span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                 {fmtCurD(60 * (inputs.maxOccupancy / 100) * results.aiCostPerMin, 2)}/hr
               </span>
             </div>
@@ -1237,14 +1249,14 @@ export default function Calculator() {
           {/* Tab bar */}
           <div style={{
             display: "flex", gap: 2, padding: "0 24px",
-            borderBottom: "1px solid #1e1f2e", background: "#0d0e14",
+            borderBottom: "1px solid #4D1F3B", background: "#2E1740",
           }}>
             {TABS.map((t) => (
               <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
                 background: "none", border: "none", cursor: "pointer",
                 padding: "14px 18px", fontSize: 13, fontWeight: 600,
-                color: activeTab === t.id ? "#a855f7" : "#6b6878",
-                borderBottom: activeTab === t.id ? "2px solid #a855f7" : "2px solid transparent",
+                color: activeTab === t.id ? "#794EC2" : "#C9C1D6",
+                borderBottom: activeTab === t.id ? "2px solid #794EC2" : "2px solid transparent",
                 marginBottom: -1, transition: "color 0.15s",
               }}>{t.label}</button>
             ))}
@@ -1259,25 +1271,25 @@ export default function Calculator() {
                 {/* Callout banner — only meaningful when AI scenarios are visible */}
                 {showAI && (
                   <div style={{
-                    background: "linear-gradient(135deg, #1a100e 0%, #140b0a 100%)",
-                    border: "1px solid #ef4444", borderRadius: 10, padding: "14px 20px",
+                    background: "linear-gradient(135deg, #3D1F1F 0%, #3D1F1F 100%)",
+                    border: "1px solid #FF66C4", borderRadius: 10, padding: "14px 20px",
                     display: "flex", alignItems: "center", gap: 14,
                   }}>
                     <div style={{ fontSize: 24 }}>⚠️</div>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#FF66C4" }}>
                         AI + Traditional Staffing Costs MORE Than Doing Nothing
                       </div>
-                      <div style={{ fontSize: 12, color: "#8a8891", marginTop: 2 }}>
+                      <div style={{ fontSize: 12, color: "#C9C1D6", marginTop: 2 }}>
                         AI agent costs add to a workforce you can't right-size — you pay for both.
                         Only flexible labor lets you fully capture AI savings.
                       </div>
                     </div>
                     <div style={{ marginLeft: "auto", textAlign: "right", flexShrink: 0 }}>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "#ef4444", fontFamily: "Space Mono, monospace" }}>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "#FF66C4", fontFamily: "Inter, sans-serif" }}>
                         +{fmtCur(results.postTraditional - results.preTraditional)}
                       </div>
-                      <div style={{ fontSize: 10, color: "#6b6878" }}>vs. status quo</div>
+                      <div style={{ fontSize: 10, color: "#C9C1D6" }}>vs. status quo</div>
                     </div>
                   </div>
                 )}
@@ -1295,61 +1307,61 @@ export default function Calculator() {
                         <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>
                           The Containment-to-Savings Gap
                         </div>
-                        <div style={{ fontSize: 10, color: "#6b6878", fontStyle: "italic" }}>
+                        <div style={{ fontSize: 10, color: "#C9C1D6", fontStyle: "italic" }}>
                           peakedness-adjusted Erlang C (Hayward 1952 · Schrieck et al. POMS 2014)
                         </div>
                       </div>
-                      <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 14 }}>
-                        Buyers assume <strong style={{ color: "#e2e0e7" }}>X% containment = X% staffing cut</strong>. It doesn't. Erlang C is non-linear, residual calls are harder, and traditional-center overhead (shrinkage, shift bloat, supervisor ratios) doesn't scale down.
+                      <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 14 }}>
+                        Buyers assume <strong style={{ color: "#FFFFFF" }}>X% containment = X% staffing cut</strong>. It doesn't. Erlang C is non-linear, residual calls are harder, and traditional-center overhead (shrinkage, shift bloat, supervisor ratios) doesn't scale down.
                       </div>
 
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
-                        <div style={{ background: "#0d0e14", border: "1px solid #2a2b3d", borderRadius: 8, padding: "12px 14px" }}>
-                          <div style={{ fontSize: 10, color: "#6b6878", marginBottom: 4 }}>AI Containment</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+                        <div style={{ background: "#2E1740", border: "1px solid #5D2F4B", borderRadius: 8, padding: "12px 14px" }}>
+                          <div style={{ fontSize: 10, color: "#C9C1D6", marginBottom: 4 }}>AI Containment</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                             {containmentPct}%
                           </div>
-                          <div style={{ fontSize: 9, color: "#4a4855", marginTop: 4 }}>what AI handles</div>
+                          <div style={{ fontSize: 9, color: "#9B7FB5", marginTop: 4 }}>what AI handles</div>
                         </div>
-                        <div style={{ background: "#0d0e14", border: "1px solid #2a2b3d", borderRadius: 8, padding: "12px 14px" }}>
-                          <div style={{ fontSize: 10, color: "#6b6878", marginBottom: 4 }}>Traditional + AI cost change</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: tradReductionPct >= 0 ? "#22c55e" : "#ef4444", fontFamily: "Space Mono, monospace" }}>
+                        <div style={{ background: "#2E1740", border: "1px solid #5D2F4B", borderRadius: 8, padding: "12px 14px" }}>
+                          <div style={{ fontSize: 10, color: "#C9C1D6", marginBottom: 4 }}>Traditional + AI cost change</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: tradReductionPct >= 0 ? "#FF7866" : "#FF66C4", fontFamily: "Inter, sans-serif" }}>
                             {tradReductionPct >= 0 ? "−" : "+"}{Math.abs(tradReductionPct).toFixed(0)}%
                           </div>
-                          <div style={{ fontSize: 9, color: "#4a4855", marginTop: 4 }}>
+                          <div style={{ fontSize: 9, color: "#9B7FB5", marginTop: 4 }}>
                             {tradReductionPct >= 0 ? "actual savings" : "cost went UP (trap)"}
                           </div>
                         </div>
-                        <div style={{ background: "#0d0e14", border: "1px solid #a855f7", borderRadius: 8, padding: "12px 14px" }}>
-                          <div style={{ fontSize: 10, color: "#a855f7", marginBottom: 4 }}>ShyftOff + AI cost change</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: "#22c55e", fontFamily: "Space Mono, monospace" }}>
+                        <div style={{ background: "#2E1740", border: "1px solid #794EC2", borderRadius: 8, padding: "12px 14px" }}>
+                          <div style={{ fontSize: 10, color: "#794EC2", marginBottom: 4 }}>ShyftOff + AI cost change</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: "#FF7866", fontFamily: "Inter, sans-serif" }}>
                             −{gigReductionPct.toFixed(0)}%
                           </div>
-                          <div style={{ fontSize: 9, color: "#4a4855", marginTop: 4 }}>flex labor captures more</div>
+                          <div style={{ fontSize: 9, color: "#9B7FB5", marginTop: 4 }}>flex labor captures more</div>
                         </div>
-                        <div style={{ background: "#1a1208", border: "1px solid #f59e0b", borderRadius: 8, padding: "12px 14px" }}>
-                          <div style={{ fontSize: 10, color: "#f59e0b", marginBottom: 4 }}>The Gap (Trad)</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b", fontFamily: "Space Mono, monospace" }}>
+                        <div style={{ background: "#2E1A0A", border: "1px solid #FFE566", borderRadius: 8, padding: "12px 14px" }}>
+                          <div style={{ fontSize: 10, color: "#FFE566", marginBottom: 4 }}>The Gap (Trad)</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: "#FFE566", fontFamily: "Inter, sans-serif" }}>
                             {gapPct.toFixed(0)} pts
                           </div>
-                          <div style={{ fontSize: 9, color: "#4a4855", marginTop: 4 }}>containment % − savings %</div>
+                          <div style={{ fontSize: 9, color: "#9B7FB5", marginTop: 4 }}>containment % − savings %</div>
                         </div>
                       </div>
 
-                      <div style={{ marginTop: 14, padding: "10px 12px", background: "#0d0e14", borderRadius: 6, fontSize: 11, color: "#8a8891", lineHeight: 1.5 }}>
-                        <strong style={{ color: "#e2e0e7" }}>Why the gap?</strong> AI handles routine calls; residual human calls are{" "}
-                        <span style={{ color: "#06b6d4" }}>{fmtD((results.s3.ahtFactor - 1) * 100, 0)}% longer</span> (residual mean from log-normal distribution after AI cuts the easy tail) and{" "}
-                        <span style={{ color: "#f59e0b" }}>{fmtD(results.cvMultiplier, 1)}× more volatile</span> (same noise, smaller mean) — which drives a{" "}
-                        <span style={{ color: "#f59e0b" }}>+{fmtD((results.s3.volatilityBuffer - 1) * 100, 1)}% peakedness-adjusted staffing buffer</span> on top of base Erlang C.
-                        Add a <span style={{ color: "#f59e0b" }}>+{inputs.postAiWagePremium}% wage premium</span> (Tier-2 skill, ZipRecruiter 2026)
+                      <div style={{ marginTop: 14, padding: "10px 12px", background: "#2E1740", borderRadius: 6, fontSize: 11, color: "#C9C1D6", lineHeight: 1.5 }}>
+                        <strong style={{ color: "#FFFFFF" }}>Why the gap?</strong> AI handles routine calls; residual human calls are{" "}
+                        <span style={{ color: "#8F68D3" }}>{fmtD((results.s3.ahtFactor - 1) * 100, 0)}% longer</span> (residual mean from log-normal distribution after AI cuts the easy tail) and{" "}
+                        <span style={{ color: "#FFE566" }}>{fmtD(results.cvMultiplier, 1)}× more volatile</span> (same noise, smaller mean) — which drives a{" "}
+                        <span style={{ color: "#FFE566" }}>+{fmtD((results.s3.volatilityBuffer - 1) * 100, 1)}% peakedness-adjusted staffing buffer</span> on top of base Erlang C.
+                        Add a <span style={{ color: "#FFE566" }}>+{inputs.postAiWagePremium}% wage premium</span> (Tier-2 skill, ZipRecruiter 2026)
                         and traditional-center still carrying full shrinkage + supervisor ratios on a smaller pie.
-                        <span style={{ color: "#6b6878", display: "block", marginTop: 6, fontSize: 10, lineHeight: 1.55 }}>
-                          <strong style={{ color: "#8a8891" }}>Gartner (Oct 2025 survey, n=321 customer-service leaders):</strong>{" "}
-                          only <span style={{ color: "#f59e0b" }}>20%</span> cut agent headcount due to AI{" · "}
-                          <span style={{ color: "#f59e0b" }}>55%</span> maintained stable staffing despite higher volumes{" · "}
-                          <span style={{ color: "#f59e0b" }}>42%</span> are creating new AI-specific roles (strategists, conversational designers, automation analysts).{" "}
+                        <span style={{ color: "#C9C1D6", display: "block", marginTop: 6, fontSize: 10, lineHeight: 1.55 }}>
+                          <strong style={{ color: "#C9C1D6" }}>Gartner (Oct 2025 survey, n=321 customer-service leaders):</strong>{" "}
+                          only <span style={{ color: "#FFE566" }}>20%</span> cut agent headcount due to AI{" · "}
+                          <span style={{ color: "#FFE566" }}>55%</span> maintained stable staffing despite higher volumes{" · "}
+                          <span style={{ color: "#FFE566" }}>42%</span> are creating new AI-specific roles (strategists, conversational designers, automation analysts).{" "}
                           <em>Patrick Quinlan, Gartner Sr. Director Analyst: "Full automation will be prohibitively expensive for most organizations."</em>{" "}
-                          Gartner forecasts <span style={{ color: "#f59e0b" }}>half of orgs that cut staff will rehire by 2027</span> (Feb 2026 prediction).
+                          Gartner forecasts <span style={{ color: "#FFE566" }}>half of orgs that cut staff will rehire by 2027</span> (Feb 2026 prediction).
                         </span>
                       </div>
                     </Card>
@@ -1366,14 +1378,14 @@ export default function Calculator() {
                     label="Traditional"
                     cost={results.preTraditional}
                     highlight="baseline"
-                    color="#ef4444"
+                    color="#FF66C4"
                     delta={0}
                     deltaLabel="(baseline)"
                   />
                   <ScenarioCard
                     label="ShyftOff"
                     cost={results.preGig}
-                    color={showAI ? "#f59e0b" : "#22c55e"}
+                    color={showAI ? "#FFE566" : "#FF7866"}
                     highlight={showAI ? undefined : "winner"}
                     tag={showAI ? undefined : "Best"}
                     delta={results.preGig - results.preTraditional}
@@ -1384,7 +1396,7 @@ export default function Calculator() {
                       <ScenarioCard
                         label="Traditional + AI"
                         cost={results.postTraditional}
-                        color="#ef4444"
+                        color="#FF66C4"
                         highlight="danger"
                         tag="Trap"
                         delta={results.postTraditional - results.preTraditional}
@@ -1393,7 +1405,7 @@ export default function Calculator() {
                       <ScenarioCard
                         label="ShyftOff + AI"
                         cost={results.postGig}
-                        color="#22c55e"
+                        color="#FF7866"
                         highlight="winner"
                         tag="Best"
                         delta={results.postGig - results.preTraditional}
@@ -1408,7 +1420,7 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     Monthly Cost Comparison
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                     {showAI
                       ? "All four scenarios at current inputs — the gap widens as containment rate increases"
                       : "Traditional traditional contact center vs. ShyftOff gig — per-month operating cost"}
@@ -1423,18 +1435,18 @@ export default function Calculator() {
                       { name: "Traditional", cost: results.preTraditional },
                       { name: "ShyftOff", cost: results.preGig },
                     ]} margin={{ top: 20, right: 20, left: 10, bottom: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e1f2e" />
-                      <XAxis dataKey="name" tick={{ fill: "#6b6878", fontSize: 11 }} />
-                      <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#6b6878", fontSize: 11 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#4D1F3B" />
+                      <XAxis dataKey="name" tick={{ fill: "#C9C1D6", fontSize: 11 }} />
+                      <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#C9C1D6", fontSize: 11 }} />
                       <Tooltip formatter={(v) => fmtCur(v)} labelStyle={{ color: "#fff" }}
-                        contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }} />
+                        contentStyle={{ background: "#1F0E2F", border: "1px solid #5D2F4B" }} />
                       <Bar dataKey="cost" radius={[4, 4, 0, 0]}
                         label={<BarLabel formatter={(v) => `$${(v / 1000).toFixed(0)}k`} />}>
                         {(showAI ? [
-                          { fill: "#ef4444" }, { fill: "#f59e0b" },
-                          { fill: "#ef4444" }, { fill: "#a855f7" },
+                          { fill: "#FF66C4" }, { fill: "#FFE566" },
+                          { fill: "#FF66C4" }, { fill: "#794EC2" },
                         ] : [
-                          { fill: "#ef4444" }, { fill: "#22c55e" },
+                          { fill: "#FF66C4" }, { fill: "#FF7866" },
                         ]).map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                       </Bar>
                     </BarChart>
@@ -1473,8 +1485,8 @@ export default function Calculator() {
                     const d = hoursData[index];
                     return (
                       <g transform={`translate(${x},${y})`}>
-                        <text dy={14} textAnchor="middle" fill="#8a8891" fontSize={11} fontWeight={600}>{payload.value}</text>
-                        {d && <text dy={28} textAnchor="middle" fill="#4a4855" fontSize={10}>{d.sub}</text>}
+                        <text dy={14} textAnchor="middle" fill="#C9C1D6" fontSize={11} fontWeight={600}>{payload.value}</text>
+                        {d && <text dy={28} textAnchor="middle" fill="#9B7FB5" fontSize={10}>{d.sub}</text>}
                       </g>
                     );
                   };
@@ -1494,39 +1506,39 @@ export default function Calculator() {
                       <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                         Where Your Paid Hours Actually Go
                       </div>
-                      <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 4, lineHeight: 1.6 }}>
+                      <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 4, lineHeight: 1.6 }}>
                         Traditional centers pay for every scheduled hour — only a portion reaches a customer.
                         ShyftOff bills productive hours only. Same output, zero waste.
                       </div>
-                      <div style={{ fontSize: 10, color: "#4a4855", marginBottom: 16, lineHeight: 1.6 }}>
-                        <span style={{ color: "#6d28d9" }}>In-center ({inputs.inCenterShrink}%)</span>: breaks, lunch rotations, coaching, system downtime — agent present, off-phones.&nbsp;
-                        <span style={{ color: "#8b5cf6" }}>Out-of-center ({inputs.outOfCenterShrink}%)</span>: training, vacation, sick/FMLA — agent absent.&nbsp;
+                      <div style={{ fontSize: 10, color: "#9B7FB5", marginBottom: 16, lineHeight: 1.6 }}>
+                        <span style={{ color: "#794EC2" }}>In-center ({inputs.inCenterShrink}%)</span>: breaks, lunch rotations, coaching, system downtime — agent present, off-phones.&nbsp;
+                        <span style={{ color: "#8F68D3" }}>Out-of-center ({inputs.outOfCenterShrink}%)</span>: training, vacation, sick/FMLA — agent absent.&nbsp;
                         Schedule inefficiency = shift-block over-coverage (agents available but not needed).
                         Adjust either input above to update.
                       </div>
                       <ResponsiveContainer width="100%" height={340}>
                         <BarChart data={hoursData} margin={{ top: 44, right: 130, left: 10, bottom: 50 }} barCategoryGap="35%">
-                          <CartesianGrid strokeDasharray="3 3" stroke="#1e1f2e" vertical={false} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#4D1F3B" vertical={false} />
                           <XAxis dataKey="name" tick={<CustomTick />} height={52} />
                           <YAxis
                             tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : `${v}`}
-                            tick={{ fill: "#6b6878", fontSize: 11 }}
-                            label={{ value: "Hrs / Month", angle: -90, position: "insideLeft", fill: "#4a4855", fontSize: 11, dx: -5 }}
+                            tick={{ fill: "#C9C1D6", fontSize: 11 }}
+                            label={{ value: "Hrs / Month", angle: -90, position: "insideLeft", fill: "#9B7FB5", fontSize: 11, dx: -5 }}
                           />
                           <Tooltip
                             formatter={(v, name) => v > 0 ? [`${Math.round(v).toLocaleString()} hrs`, name] : null}
                             labelStyle={{ color: "#fff" }}
-                            contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }}
+                            contentStyle={{ background: "#1F0E2F", border: "1px solid #5D2F4B" }}
                           />
                           <Legend
                             verticalAlign="bottom" wrapperStyle={{ paddingTop: 12 }}
-                            formatter={(value) => <span style={{ color: "#8a8891", fontSize: 11 }}>{value}</span>}
+                            formatter={(value) => <span style={{ color: "#C9C1D6", fontSize: 11 }}>{value}</span>}
                           />
-                          <ReferenceLine y={productive} stroke="#3a3b4d" strokeDasharray="5 3"
-                            label={{ value: "← same productive output", position: "right", fill: "#4a4855", fontSize: 10 }} />
+                          <ReferenceLine y={productive} stroke="#7A5A8E" strokeDasharray="5 3"
+                            label={{ value: "← same productive output", position: "right", fill: "#9B7FB5", fontSize: 10 }} />
 
                           {/* 1 — Productive (bottom, both bars) */}
-                          <Bar dataKey="Productive" stackId="a" name="Productive" fill="#4c1d95" radius={[0,0,4,4]}>
+                          <Bar dataKey="Productive" stackId="a" name="Productive" fill="#27133A" radius={[0,0,4,4]}>
                             <LabelList content={({ x, y, width, height, value }) => {
                               if (!value || height < 50) return null;
                               return (
@@ -1545,8 +1557,8 @@ export default function Calculator() {
                               if (index !== 1) return null;
                               return (
                                 <g>
-                                  <text x={x+width/2} y={y-18} textAnchor="middle" fill="#22c55e" fontSize={10} fontWeight={600}>(0% waste)</text>
-                                  <text x={x+width/2} y={y-4} textAnchor="middle" fill="#e2e0e7" fontSize={12} fontWeight={700}>
+                                  <text x={x+width/2} y={y-18} textAnchor="middle" fill="#FF7866" fontSize={10} fontWeight={600}>(0% waste)</text>
+                                  <text x={x+width/2} y={y-4} textAnchor="middle" fill="#FFFFFF" fontSize={12} fontWeight={700}>
                                     {productive.toLocaleString()} paid hrs
                                   </text>
                                 </g>
@@ -1555,17 +1567,17 @@ export default function Calculator() {
                           </Bar>
 
                           {/* 2 — In-Center Shrinkage (breaks, lunch, coaching — agent present, off-phones) */}
-                          <Bar dataKey="In-Center Shrinkage" stackId="a" name="In-Center Shrinkage" fill="#6d28d9">
+                          <Bar dataKey="In-Center Shrinkage" stackId="a" name="In-Center Shrinkage" fill="#794EC2">
                             <LabelList dataKey="In-Center Shrinkage" content={segLabel} />
                           </Bar>
 
                           {/* 3 — Out-of-Center Shrinkage (training, vacation, sick — agent absent) */}
-                          <Bar dataKey="Out-of-Center Shrinkage" stackId="a" name="Out-of-Center Shrinkage" fill="#8b5cf6">
+                          <Bar dataKey="Out-of-Center Shrinkage" stackId="a" name="Out-of-Center Shrinkage" fill="#8F68D3">
                             <LabelList dataKey="Out-of-Center Shrinkage" content={segLabel} />
                           </Bar>
 
                           {/* 4 — Schedule Inefficiency (shift-block overstaffing — agent available but not needed) */}
-                          <Bar dataKey="Schedule Inefficiency" stackId="a" name="Schedule Inefficiency" fill="#c4b5fd" radius={[4,4,0,0]}>
+                          <Bar dataKey="Schedule Inefficiency" stackId="a" name="Schedule Inefficiency" fill="#8F68D3" radius={[4,4,0,0]}>
                             <LabelList dataKey="Schedule Inefficiency" content={segLabel} />
                             {/* Above-bar annotation for Traditional (Schedule Inefficiency is its topmost segment) */}
                             <LabelList position="top" content={({ x, y, width, index }) => {
@@ -1573,10 +1585,10 @@ export default function Calculator() {
                               const d = hoursData[0];
                               return (
                                 <g>
-                                  <text x={x+width/2} y={y-18} textAnchor="middle" fill="#ef4444" fontSize={10} fontWeight={600}>
+                                  <text x={x+width/2} y={y-18} textAnchor="middle" fill="#FF66C4" fontSize={10} fontWeight={600}>
                                     ({d.wastePct}% waste)
                                   </text>
-                                  <text x={x+width/2} y={y-4} textAnchor="middle" fill="#e2e0e7" fontSize={12} fontWeight={700}>
+                                  <text x={x+width/2} y={y-4} textAnchor="middle" fill="#FFFFFF" fontSize={12} fontWeight={700}>
                                     {d.total.toLocaleString()} paid hrs
                                   </text>
                                 </g>
@@ -1597,38 +1609,38 @@ export default function Calculator() {
                 }}>
                   {(showAI ? [
                     { label: "Cost per Resolved Contact", values: [
-                      { s: "Trad (no AI)", v: fmtCurD(results.cprc.preTraditional, 2), c: "#ef4444" },
-                      { s: "ShyftOff (no AI)", v: fmtCurD(results.cprc.preGig, 2), c: "#f59e0b" },
-                      { s: "ShyftOff + AI", v: fmtCurD(results.cprc.postGig, 2), c: "#22c55e" },
+                      { s: "Trad (no AI)", v: fmtCurD(results.cprc.preTraditional, 2), c: "#FF66C4" },
+                      { s: "ShyftOff (no AI)", v: fmtCurD(results.cprc.preGig, 2), c: "#FFE566" },
+                      { s: "ShyftOff + AI", v: fmtCurD(results.cprc.postGig, 2), c: "#FF7866" },
                     ]},
                     { label: "AI Handled This Month", values: [
-                      { s: "Calls resolved by AI", v: fmt(results.s3AIHandledCalls), c: "#a855f7" },
-                      { s: "AI monthly cost", v: fmtCur(results.s3AIMonthlyCost), c: "#8b5cf6" },
-                      { s: "Cost per AI resolution", v: fmtCurD(results.s3AIMonthlyCost / (results.s3AIHandledCalls || 1), 3), c: "#6366f1" },
+                      { s: "Calls resolved by AI", v: fmt(results.s3AIHandledCalls), c: "#794EC2" },
+                      { s: "AI monthly cost", v: fmtCur(results.s3AIMonthlyCost), c: "#8F68D3" },
+                      { s: "Cost per AI resolution", v: fmtCurD(results.s3AIMonthlyCost / (results.s3AIHandledCalls || 1), 3), c: "#8F68D3" },
                     ]},
                     { label: "Human Volume Post-AI", values: [
-                      { s: "Residual human calls", v: fmt(results.humanVolumePostAI), c: "#06b6d4" },
-                      { s: "Avg handle time", v: `${fmtD(results.humanAHTPostAI, 1)} min`, c: "#06b6d4" },
-                      { s: "FTE required", v: fmtD(results.avgFTEPostTrad, 0), c: "#06b6d4" },
+                      { s: "Residual human calls", v: fmt(results.humanVolumePostAI), c: "#8F68D3" },
+                      { s: "Avg handle time", v: `${fmtD(results.humanAHTPostAI, 1)} min`, c: "#8F68D3" },
+                      { s: "FTE required", v: fmtD(results.avgFTEPostTrad, 0), c: "#8F68D3" },
                     ]},
                   ] : [
                     { label: "Cost per Resolved Contact", values: [
-                      { s: "Traditional", v: fmtCurD(results.cprc.preTraditional, 2), c: "#ef4444" },
-                      { s: "ShyftOff", v: fmtCurD(results.cprc.preGig, 2), c: "#22c55e" },
-                      { s: "Savings per contact", v: fmtCurD(results.cprc.preTraditional - results.cprc.preGig, 2), c: "#a855f7" },
+                      { s: "Traditional", v: fmtCurD(results.cprc.preTraditional, 2), c: "#FF66C4" },
+                      { s: "ShyftOff", v: fmtCurD(results.cprc.preGig, 2), c: "#FF7866" },
+                      { s: "Savings per contact", v: fmtCurD(results.cprc.preTraditional - results.cprc.preGig, 2), c: "#794EC2" },
                     ]},
                     { label: "Traditional Cost Stack", values: [
-                      { s: "Sup / Mgr / WFM", v: `${results.s1.supCount} / ${results.s1.mgrCount} / ${results.s1.wfmCount}`, c: "#f59e0b" },
-                      { s: "Support cost / mo", v: fmtCur(results.s1.supportCostMonthly), c: "#f59e0b" },
-                      { s: "Workstation / mo", v: fmtCur(results.s1.workstationCostMonthly), c: "#f59e0b" },
+                      { s: "Sup / Mgr / WFM", v: `${results.s1.supCount} / ${results.s1.mgrCount} / ${results.s1.wfmCount}`, c: "#FFE566" },
+                      { s: "Support cost / mo", v: fmtCur(results.s1.supportCostMonthly), c: "#FFE566" },
+                      { s: "Workstation / mo", v: fmtCur(results.s1.workstationCostMonthly), c: "#FFE566" },
                     ]},
                   ]).map(({ label, values }) => (
                     <Card key={label}>
-                      <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 12, fontWeight: 600 }}>{label}</div>
+                      <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 12, fontWeight: 600 }}>{label}</div>
                       {values.map(({ s, v, c }) => (
                         <div key={s} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, alignItems: "baseline" }}>
-                          <span style={{ fontSize: 11, color: "#6b6878" }}>{s}</span>
-                          <span style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "Space Mono, monospace" }}>{v}</span>
+                          <span style={{ fontSize: 11, color: "#C9C1D6" }}>{s}</span>
+                          <span style={{ fontSize: 14, fontWeight: 700, color: c, fontFamily: "Inter, sans-serif" }}>{v}</span>
                         </div>
                       ))}
                     </Card>
@@ -1645,14 +1657,14 @@ export default function Calculator() {
                 {showAI && (
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
                     {[
-                      { label: "Pre-AI Demand Variability", value: `${fmtD(results.preCV * 100, 1)}%`, sub: "Coefficient of Variation", color: "#f59e0b" },
-                      { label: "Post-AI Demand Variability", value: `${fmtD(results.postCV * 100, 1)}%`, sub: "Coefficient of Variation", color: "#ef4444" },
-                      { label: "Volatility Multiplier", value: `${fmtD(results.cvMultiplier, 1)}×`, sub: "harder to staff with FTE", color: "#a855f7" },
+                      { label: "Pre-AI Demand Variability", value: `${fmtD(results.preCV * 100, 1)}%`, sub: "Coefficient of Variation", color: "#FFE566" },
+                      { label: "Post-AI Demand Variability", value: `${fmtD(results.postCV * 100, 1)}%`, sub: "Coefficient of Variation", color: "#FF66C4" },
+                      { label: "Volatility Multiplier", value: `${fmtD(results.cvMultiplier, 1)}×`, sub: "harder to staff with FTE", color: "#794EC2" },
                     ].map(({ label, value, sub, color }) => (
                       <Card key={label} style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 8 }}>{label}</div>
-                        <div style={{ fontSize: 32, fontWeight: 800, color, fontFamily: "Space Mono, monospace" }}>{value}</div>
-                        <div style={{ fontSize: 11, color: "#4a4855", marginTop: 4 }}>{sub}</div>
+                        <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 8 }}>{label}</div>
+                        <div style={{ fontSize: 32, fontWeight: 800, color, fontFamily: "Inter, sans-serif" }}>{value}</div>
+                        <div style={{ fontSize: 11, color: "#9B7FB5", marginTop: 4 }}>{sub}</div>
                       </Card>
                     ))}
                   </div>
@@ -1664,31 +1676,31 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     Intraday Demand: Pre-AI vs Post-AI Human Demand
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                     Peak day. Post-AI demand is lower but more volatile — traditional shift blocks can't flex with it.
                   </div>
                   <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={results.intervalChart} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
                       <defs>
                         <linearGradient id="preGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#FF66C4" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#FF66C4" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="postGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#794EC2" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#794EC2" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e1f2e" />
-                      <XAxis dataKey="label" tick={{ fill: "#6b6878", fontSize: 10 }}
+                      <CartesianGrid strokeDasharray="3 3" stroke="#4D1F3B" />
+                      <XAxis dataKey="label" tick={{ fill: "#C9C1D6", fontSize: 10 }}
                         interval={3} />
-                      <YAxis tick={{ fill: "#6b6878", fontSize: 11 }} label={{ value: "Agents", angle: -90, position: "insideLeft", fill: "#4a4855", fontSize: 11 }} />
-                      <Tooltip contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }}
+                      <YAxis tick={{ fill: "#C9C1D6", fontSize: 11 }} label={{ value: "Agents", angle: -90, position: "insideLeft", fill: "#9B7FB5", fontSize: 11 }} />
+                      <Tooltip contentStyle={{ background: "#1F0E2F", border: "1px solid #5D2F4B" }}
                         labelStyle={{ color: "#fff" }} formatter={(v) => [fmt(v), ""]} />
-                      <Legend wrapperStyle={{ fontSize: 12, color: "#8a8891" }} />
-                      <Area type="monotone" dataKey="Pre-AI Demand" stroke="#ef4444" strokeWidth={2}
+                      <Legend wrapperStyle={{ fontSize: 12, color: "#C9C1D6" }} />
+                      <Area type="monotone" dataKey="Pre-AI Demand" stroke="#FF66C4" strokeWidth={2}
                         fill="url(#preGrad)" dot={false} />
-                      <Area type="monotone" dataKey="Post-AI Human Demand" stroke="#a855f7" strokeWidth={2}
+                      <Area type="monotone" dataKey="Post-AI Human Demand" stroke="#794EC2" strokeWidth={2}
                         fill="url(#postGrad)" dot={false} />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -1710,7 +1722,7 @@ export default function Calculator() {
                           ).map((h, i) => (
                             <th key={h} style={{
                               textAlign: i === 0 ? "left" : "right", padding: "8px 12px",
-                              color: "#6b6878", fontWeight: 600, borderBottom: "1px solid #1e1f2e",
+                              color: "#C9C1D6", fontWeight: 600, borderBottom: "1px solid #4D1F3B",
                               fontSize: 11,
                             }}>{h}</th>
                           ))}
@@ -1757,18 +1769,18 @@ export default function Calculator() {
                             { label: "Total Monthly Cost", vals: [fmtCur(results.preTraditional), fmtCur(results.preGig)], bold: true },
                           ];
                         })()).map(({ label, vals, bold }) => (
-                          <tr key={label} style={{ borderBottom: "1px solid #1a1b26" }}>
-                            <td style={{ padding: "9px 12px", color: bold ? "#fff" : "#8a8891", fontWeight: bold ? 700 : 400 }}>{label}</td>
+                          <tr key={label} style={{ borderBottom: "1px solid #1F0E2F" }}>
+                            <td style={{ padding: "9px 12px", color: bold ? "#fff" : "#C9C1D6", fontWeight: bold ? 700 : 400 }}>{label}</td>
                             {vals.map((v, i) => (
                               <td key={i} style={{
                                 padding: "9px 12px", textAlign: "right",
                                 color: bold
                                   ? (showAI
-                                    ? (i === 2 ? "#ef4444" : i === 3 ? "#22c55e" : "#e2e0e7")
-                                    : (i === 0 ? "#ef4444" : "#22c55e"))
-                                  : "#8a8891",
+                                    ? (i === 2 ? "#FF66C4" : i === 3 ? "#FF7866" : "#FFFFFF")
+                                    : (i === 0 ? "#FF66C4" : "#FF7866"))
+                                  : "#C9C1D6",
                                 fontWeight: bold ? 700 : 400,
-                                fontFamily: "Space Mono, monospace",
+                                fontFamily: "Inter, sans-serif",
                               }}>{v}</td>
                             ))}
                           </tr>
@@ -1783,38 +1795,38 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     Staffing Levels Throughout the Day — {showAI ? "Post-AI Traditional (Residual Demand)" : "Traditional Center"}
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
-                    <span style={{ color: "#3b82f6", fontWeight: 600 }}>Scheduled</span> = heads-in-seats from shift blocks &nbsp;|&nbsp;
-                    <span style={{ color: "#f59e0b", fontWeight: 600 }}>In Center</span> = bodies present (scheduled − out-of-center) &nbsp;|&nbsp;
-                    <span style={{ color: "#ef4444", fontWeight: 600 }}>Required</span> = raw Erlang C (on-phones demand) &nbsp;|&nbsp;
-                    <span style={{ color: "#22c55e", fontWeight: 600 }}>On-Phones</span> = actually delivered after breaks/lunches
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
+                    <span style={{ color: "#794EC2", fontWeight: 600 }}>Scheduled</span> = heads-in-seats from shift blocks &nbsp;|&nbsp;
+                    <span style={{ color: "#FFE566", fontWeight: 600 }}>In Center</span> = bodies present (scheduled − out-of-center) &nbsp;|&nbsp;
+                    <span style={{ color: "#FF66C4", fontWeight: 600 }}>Required</span> = raw Erlang C (on-phones demand) &nbsp;|&nbsp;
+                    <span style={{ color: "#FF7866", fontWeight: 600 }}>On-Phones</span> = actually delivered after breaks/lunches
                   </div>
                   <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={results.staffingChartData} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
                       <defs>
                         <linearGradient id="schedGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.25} />
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#794EC2" stopOpacity={0.25} />
+                          <stop offset="95%" stopColor="#794EC2" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="reqGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
-                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#FF66C4" stopOpacity={0.2} />
+                          <stop offset="95%" stopColor="#FF66C4" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e1f2e" />
-                      <XAxis dataKey="label" tick={{ fill: "#6b6878", fontSize: 10 }} interval={3} />
-                      <YAxis tick={{ fill: "#6b6878", fontSize: 11 }}
-                        label={{ value: "Agents", angle: -90, position: "insideLeft", fill: "#4a4855", fontSize: 11 }} />
-                      <Tooltip contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }}
+                      <CartesianGrid strokeDasharray="3 3" stroke="#4D1F3B" />
+                      <XAxis dataKey="label" tick={{ fill: "#C9C1D6", fontSize: 10 }} interval={3} />
+                      <YAxis tick={{ fill: "#C9C1D6", fontSize: 11 }}
+                        label={{ value: "Agents", angle: -90, position: "insideLeft", fill: "#9B7FB5", fontSize: 11 }} />
+                      <Tooltip contentStyle={{ background: "#1F0E2F", border: "1px solid #5D2F4B" }}
                         labelStyle={{ color: "#fff" }} formatter={(v, n) => [fmt(v), n]} />
-                      <Legend wrapperStyle={{ fontSize: 12, color: "#8a8891" }} />
-                      <Area type="stepAfter" dataKey="Scheduled (Shifts)" stroke="#3b82f6" strokeWidth={2.5}
+                      <Legend wrapperStyle={{ fontSize: 12, color: "#C9C1D6" }} />
+                      <Area type="stepAfter" dataKey="Scheduled (Shifts)" stroke="#794EC2" strokeWidth={2.5}
                         fill="url(#schedGrad)" dot={false} />
-                      <Area type="stepAfter" dataKey="In Center" stroke="#f59e0b" strokeWidth={2}
+                      <Area type="stepAfter" dataKey="In Center" stroke="#FFE566" strokeWidth={2}
                         fill="none" dot={false} strokeDasharray="3 3" />
-                      <Area type="monotone" dataKey="Required (Erlang C)" stroke="#ef4444" strokeWidth={2}
+                      <Area type="monotone" dataKey="Required (Erlang C)" stroke="#FF66C4" strokeWidth={2}
                         fill="url(#reqGrad)" dot={false} strokeDasharray="6 3" />
-                      <Area type="monotone" dataKey="Actual On-Phones" stroke="#22c55e" strokeWidth={2}
+                      <Area type="monotone" dataKey="Actual On-Phones" stroke="#FF7866" strokeWidth={2}
                         fill="none" dot={false} strokeDasharray="4 4" />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -1823,7 +1835,7 @@ export default function Calculator() {
                       paddingLeft/Right match Recharts' plot area so cells line
                       up with the chart's x-axis ticks above. */}
                   <div className="calc-heatmap-strip" style={{ marginTop: 6, paddingLeft: 55, paddingRight: 20 }}>
-                    <div style={{ fontSize: 10, color: "#6b6878", fontWeight: 600, marginBottom: 4,
+                    <div style={{ fontSize: 10, color: "#C9C1D6", fontWeight: 600, marginBottom: 4,
                       textTransform: "uppercase", letterSpacing: "0.06em" }}>
                       Per-interval On-Phones vs Required (the SL story)
                     </div>
@@ -1852,8 +1864,8 @@ export default function Calculator() {
                             style={{
                               background: bg, height: 24, borderRadius: 3, cursor: "default",
                               display: "flex", alignItems: "center", justifyContent: "center",
-                              fontSize: 11, fontWeight: 700, color: "#0a0b0f",
-                              fontFamily: "'Space Mono', monospace",
+                              fontSize: 11, fontWeight: 700, color: "#27133A",
+                              fontFamily: "'Inter', sans-serif",
                             }}>
                             {label}
                           </div>
@@ -1861,12 +1873,12 @@ export default function Calculator() {
                       })}
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4,
-                      fontSize: 10, color: "#4a4855", fontFamily: "Space Mono, monospace" }}>
+                      fontSize: 10, color: "#9B7FB5", fontFamily: "Inter, sans-serif" }}>
                       <span>{results.staffingChartData[0]?.label ?? ""}</span>
                       <span>{results.staffingChartData[Math.floor(results.staffingChartData.length / 2)]?.label ?? ""}</span>
                       <span>{results.staffingChartData[results.staffingChartData.length - 1]?.label ?? ""}</span>
                     </div>
-                    <div style={{ display: "flex", gap: 14, marginTop: 8, fontSize: 10, color: "#6b6878" }}>
+                    <div style={{ display: "flex", gap: 14, marginTop: 8, fontSize: 10, color: "#C9C1D6" }}>
                       <span><span style={{ display: "inline-block", width: 10, height: 10, background: "rgba(239,68,68,0.7)", borderRadius: 2, marginRight: 4, verticalAlign: "middle" }} />Understaffed</span>
                       <span><span style={{ display: "inline-block", width: 10, height: 10, background: "rgba(245,158,11,0.45)", borderRadius: 2, marginRight: 4, verticalAlign: "middle" }} />At target</span>
                       <span><span style={{ display: "inline-block", width: 10, height: 10, background: "rgba(34,197,94,0.6)", borderRadius: 2, marginRight: 4, verticalAlign: "middle" }} />Overstaffed</span>
@@ -1876,18 +1888,18 @@ export default function Calculator() {
 
                 {/* ── Shift Waste Warning ── */}
                 <div style={{
-                  background: "linear-gradient(135deg, #1a100e 0%, #140b0a 100%)",
-                  border: "1px solid #ef4444", borderRadius: 10, padding: "14px 20px",
+                  background: "linear-gradient(135deg, #3D1F1F 0%, #3D1F1F 100%)",
+                  border: "1px solid #FF66C4", borderRadius: 10, padding: "14px 20px",
                   display: "flex", alignItems: "center", gap: 16,
                 }}>
                   <div style={{ fontSize: 22, flexShrink: 0 }}>⏳</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 3 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#FF66C4", marginBottom: 3 }}>
                       {showAI
                         ? "Even Smaller AI-Residual Volume Costs This Much — Volatility Forces Over-Coverage"
                         : "Paying for Every Scheduled Hour — Including Shrinkage and Coverage Gaps"}
                     </div>
-                    <div style={{ fontSize: 12, color: "#8a8891", lineHeight: 1.5 }}>
+                    <div style={{ fontSize: 12, color: "#C9C1D6", lineHeight: 1.5 }}>
                       {showAI ? (
                         <>The post-AI residual stream is choppier (higher CV) than the pre-AI
                         baseline. Traditional fixed shifts still carry full shrinkage plus
@@ -1901,10 +1913,10 @@ export default function Calculator() {
                     </div>
                   </div>
                   <div style={{ flexShrink: 0, textAlign: "right" }}>
-                    <div style={{ fontSize: 20, fontWeight: 800, color: "#ef4444", fontFamily: "Space Mono, monospace" }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: "#FF66C4", fontFamily: "Inter, sans-serif" }}>
                       {fmtD(results.totalInefficiencyHrsDay, 0)} hrs/day
                     </div>
-                    <div style={{ fontSize: 11, color: "#6b6878", marginTop: 2 }}>
+                    <div style={{ fontSize: 11, color: "#C9C1D6", marginTop: 2 }}>
                       {fmtCur(results.totalInefficiencyCostMonth)}/mo lost to inefficiency
                     </div>
                   </div>
@@ -1915,7 +1927,7 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     Shift-Block Scheduling Inefficiency — Per Shift Breakdown
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                     {showAI
                       ? "Post-AI traditional schedule (residual demand after AI containment). Every shift still carries shrinkage plus over-coverage to absorb the noisier residual stream."
                       : "Pre-AI traditional baseline. Every shift carries inefficiency from shrinkage (breaks, lunch, training, PTO) plus any over-coverage above its proportional demand share."}
@@ -1927,50 +1939,50 @@ export default function Calculator() {
                           {["Shift", "Window", "Agents", "Avg Needed", "Utilization", "Inefficiency Hrs/Day", "Inefficiency Cost/Mo"].map((h, i) => (
                             <th key={h} style={{
                               textAlign: i <= 1 ? "left" : "right",
-                              padding: "8px 12px", color: "#6b6878", fontWeight: 600,
-                              borderBottom: "1px solid #1e1f2e", fontSize: 11, whiteSpace: "nowrap",
+                              padding: "8px 12px", color: "#C9C1D6", fontWeight: 600,
+                              borderBottom: "1px solid #4D1F3B", fontSize: 11, whiteSpace: "nowrap",
                             }}>{h}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {results.shiftTableRows.map((row) => (
-                          <tr key={row.name} style={{ borderBottom: "1px solid #1a1b26" }}>
-                            <td style={{ padding: "9px 12px", color: "#8a8891" }}>{row.name}</td>
-                            <td style={{ padding: "9px 12px", color: "#6b6878", fontFamily: "Space Mono, monospace", fontSize: 11 }}>{row.window}</td>
-                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#3b82f6", fontWeight: 700, fontFamily: "Space Mono, monospace" }}>{row.agents}</td>
-                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#8a8891", fontFamily: "Space Mono, monospace" }}>{row.avgNeeded}</td>
+                          <tr key={row.name} style={{ borderBottom: "1px solid #1F0E2F" }}>
+                            <td style={{ padding: "9px 12px", color: "#C9C1D6" }}>{row.name}</td>
+                            <td style={{ padding: "9px 12px", color: "#C9C1D6", fontFamily: "Inter, sans-serif", fontSize: 11 }}>{row.window}</td>
+                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#794EC2", fontWeight: 700, fontFamily: "Inter, sans-serif" }}>{row.agents}</td>
+                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#C9C1D6", fontFamily: "Inter, sans-serif" }}>{row.avgNeeded}</td>
                             <td style={{ padding: "9px 12px", minWidth: 120 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
-                                <div style={{ width: 60, height: 6, background: "#1e1f2e", borderRadius: 3, overflow: "hidden" }}>
+                                <div style={{ width: 60, height: 6, background: "#4D1F3B", borderRadius: 3, overflow: "hidden" }}>
                                   <div style={{
                                     width: `${Math.min(row.utilizationPct, 100)}%`, height: "100%",
-                                    background: row.utilizationPct >= 80 ? "#22c55e" : row.utilizationPct >= 60 ? "#f59e0b" : "#ef4444",
+                                    background: row.utilizationPct >= 80 ? "#FF7866" : row.utilizationPct >= 60 ? "#FFE566" : "#FF66C4",
                                     borderRadius: 3,
                                   }} />
                                 </div>
-                                <span style={{ fontSize: 11, color: "#8a8891", fontFamily: "Space Mono, monospace", minWidth: 36, textAlign: "right" }}>
+                                <span style={{ fontSize: 11, color: "#C9C1D6", fontFamily: "Inter, sans-serif", minWidth: 36, textAlign: "right" }}>
                                   {fmtD(row.utilizationPct, 0)}%
                                 </span>
                               </div>
                             </td>
-                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#f59e0b", fontFamily: "Space Mono, monospace" }}>
+                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#FFE566", fontFamily: "Inter, sans-serif" }}>
                               {fmtD(row.inefficiencyHrsDay, 1)}
                             </td>
-                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#ef4444", fontFamily: "Space Mono, monospace" }}>
+                            <td style={{ padding: "9px 12px", textAlign: "right", color: "#FF66C4", fontFamily: "Inter, sans-serif" }}>
                               {fmtCur(row.inefficiencyCostMonth)}
                             </td>
                           </tr>
                         ))}
                         {/* Total row */}
-                        <tr style={{ borderTop: "2px solid #2a2b3d", background: "#0d0e14" }}>
+                        <tr style={{ borderTop: "2px solid #5D2F4B", background: "#2E1740" }}>
                           <td colSpan={5} style={{ padding: "10px 12px", color: "#fff", fontWeight: 700, fontSize: 12 }}>
                             Total Shift Inefficiency
                           </td>
-                          <td style={{ padding: "10px 12px", textAlign: "right", color: "#f59e0b", fontWeight: 700, fontFamily: "Space Mono, monospace" }}>
+                          <td style={{ padding: "10px 12px", textAlign: "right", color: "#FFE566", fontWeight: 700, fontFamily: "Inter, sans-serif" }}>
                             {fmtD(results.totalInefficiencyHrsDay, 1)}
                           </td>
-                          <td style={{ padding: "10px 12px", textAlign: "right", color: "#ef4444", fontWeight: 700, fontFamily: "Space Mono, monospace", fontSize: 14 }}>
+                          <td style={{ padding: "10px 12px", textAlign: "right", color: "#FF66C4", fontWeight: 700, fontFamily: "Inter, sans-serif", fontSize: 14 }}>
                             {fmtCur(results.totalInefficiencyCostMonth)}
                           </td>
                         </tr>
@@ -1985,20 +1997,20 @@ export default function Calculator() {
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                       Sensitivity Analysis: Total Cost by Containment Rate
                     </div>
-                    <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                    <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                       The amber dashed line is what buyers <em>assume</em> they'll get (linear cut). The gap to Trad + AI is real traditional-center overhead AI can't displace — shrinkage, shift bloat, supervisor ratios, residual SL floor.
                     </div>
                     <ResponsiveContainer width="100%" height={240}>
                       <LineChart data={results.sensitivityData} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e1f2e" />
-                        <XAxis dataKey="containment" tick={{ fill: "#6b6878", fontSize: 11 }} />
-                        <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#6b6878", fontSize: 11 }} />
-                        <Tooltip formatter={(v) => fmtCur(v)} contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }} />
-                        <Legend wrapperStyle={{ fontSize: 12, color: "#8a8891" }} />
-                        <Line type="monotone" dataKey="Traditional + AI" stroke="#ef4444" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="ShyftOff + AI" stroke="#a855f7" strokeWidth={2.5} dot={false} />
-                        <Line type="monotone" dataKey="Trad (no AI)" stroke="#4a4855" strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
-                        <Line type="monotone" dataKey="Naive Linear Estimate" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="2 4" dot={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#4D1F3B" />
+                        <XAxis dataKey="containment" tick={{ fill: "#C9C1D6", fontSize: 11 }} />
+                        <YAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} tick={{ fill: "#C9C1D6", fontSize: 11 }} />
+                        <Tooltip formatter={(v) => fmtCur(v)} contentStyle={{ background: "#1F0E2F", border: "1px solid #5D2F4B" }} />
+                        <Legend wrapperStyle={{ fontSize: 12, color: "#C9C1D6" }} />
+                        <Line type="monotone" dataKey="Traditional + AI" stroke="#FF66C4" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="ShyftOff + AI" stroke="#794EC2" strokeWidth={2.5} dot={false} />
+                        <Line type="monotone" dataKey="Trad (no AI)" stroke="#9B7FB5" strokeWidth={1.5} strokeDasharray="5 3" dot={false} />
+                        <Line type="monotone" dataKey="Naive Linear Estimate" stroke="#FFE566" strokeWidth={1.5} strokeDasharray="2 4" dot={false} />
                       </LineChart>
                     </ResponsiveContainer>
                   </Card>
@@ -2007,33 +2019,33 @@ export default function Calculator() {
                     <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                       Sensitivity Analysis: Total Cost by Call Volume
                     </div>
-                    <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                    <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                       As volume grows, ShyftOff savings compound — Traditional loaded wages and support overhead create a steeper cost curve
                     </div>
                     <ResponsiveContainer width="100%" height={240}>
                       <LineChart data={results.volumeSweepData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e1f2e" />
-                        <XAxis dataKey="label" tick={{ fill: "#6b6878", fontSize: 11 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#4D1F3B" />
+                        <XAxis dataKey="label" tick={{ fill: "#C9C1D6", fontSize: 11 }} />
                         <YAxis
                           tickFormatter={(v) => v >= 1000000 ? `$${(v / 1000000).toFixed(1)}M` : `$${(v / 1000).toFixed(0)}k`}
-                          tick={{ fill: "#6b6878", fontSize: 11 }} width={58}
+                          tick={{ fill: "#C9C1D6", fontSize: 11 }} width={58}
                         />
                         <Tooltip
                           formatter={(v, name) => [fmtCur(v), name]}
                           labelFormatter={(l) => `${l} calls / mo`}
                           labelStyle={{ color: "#fff" }}
-                          contentStyle={{ background: "#13141a", border: "1px solid #2a2b3d" }}
+                          contentStyle={{ background: "#1F0E2F", border: "1px solid #5D2F4B" }}
                         />
                         <ReferenceLine
                           x={results.volumeSweepData[3]?.label}
-                          stroke="#3a3b4d" strokeDasharray="4 4"
-                          label={{ value: "current", fill: "#4a4855", fontSize: 10, position: "insideTopRight" }}
+                          stroke="#7A5A8E" strokeDasharray="4 4"
+                          label={{ value: "current", fill: "#9B7FB5", fontSize: 10, position: "insideTopRight" }}
                         />
-                        <Line type="monotone" dataKey="Traditional" stroke="#ef4444" strokeWidth={2.5}
-                          dot={{ r: 3, fill: "#ef4444", strokeWidth: 0 }} activeDot={{ r: 5 }} />
-                        <Line type="monotone" dataKey="ShyftOff" stroke="#a855f7" strokeWidth={2.5}
-                          dot={{ r: 3, fill: "#a855f7", strokeWidth: 0 }} activeDot={{ r: 5 }} />
-                        <Legend formatter={(v) => <span style={{ color: "#a0a0b0", fontSize: 11 }}>{v}</span>} />
+                        <Line type="monotone" dataKey="Traditional" stroke="#FF66C4" strokeWidth={2.5}
+                          dot={{ r: 3, fill: "#FF66C4", strokeWidth: 0 }} activeDot={{ r: 5 }} />
+                        <Line type="monotone" dataKey="ShyftOff" stroke="#794EC2" strokeWidth={2.5}
+                          dot={{ r: 3, fill: "#794EC2", strokeWidth: 0 }} activeDot={{ r: 5 }} />
+                        <Legend formatter={(v) => <span style={{ color: "#C9C1D6", fontSize: 11 }}>{v}</span>} />
                       </LineChart>
                     </ResponsiveContainer>
                   </Card>
@@ -2050,7 +2062,7 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     AI Cost Stack — Per-Minute Breakdown
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 20 }}>
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 20 }}>
                     Every component driving your AI agent cost per minute
                   </div>
                   {results.aiStack.map(({ name, value, color }) => {
@@ -2058,15 +2070,15 @@ export default function Calculator() {
                     return (
                       <div key={name} style={{ marginBottom: 14 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-                          <span style={{ fontSize: 12, color: "#8a8891" }}>{name}</span>
+                          <span style={{ fontSize: 12, color: "#C9C1D6" }}>{name}</span>
                           <div style={{ display: "flex", gap: 16 }}>
-                            <span style={{ fontSize: 12, color: "#4a4855" }}>{fmtD(pct * 100, 1)}%</span>
-                            <span style={{ fontSize: 12, fontWeight: 700, color, fontFamily: "Space Mono, monospace" }}>
+                            <span style={{ fontSize: 12, color: "#9B7FB5" }}>{fmtD(pct * 100, 1)}%</span>
+                            <span style={{ fontSize: 12, fontWeight: 700, color, fontFamily: "Inter, sans-serif" }}>
                               {fmtCurD(value, 4)}/min
                             </span>
                           </div>
                         </div>
-                        <div style={{ height: 8, background: "#1e1f2e", borderRadius: 4, overflow: "hidden" }}>
+                        <div style={{ height: 8, background: "#4D1F3B", borderRadius: 4, overflow: "hidden" }}>
                           <div style={{
                             width: `${Math.min(pct * 100, 100)}%`, height: "100%",
                             background: color, borderRadius: 4, transition: "width 0.4s ease",
@@ -2075,15 +2087,15 @@ export default function Calculator() {
                       </div>
                     );
                   })}
-                  <div style={{ borderTop: "1px solid #1e1f2e", marginTop: 16, paddingTop: 14, display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 12, color: "#8a8891" }}>Subtotal</span>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+                  <div style={{ borderTop: "1px solid #4D1F3B", marginTop: 16, paddingTop: 14, display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 12, color: "#C9C1D6" }}>Subtotal</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                       {fmtCurD(results.aiCostBase, 4)}/min
                     </span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-                    <span style={{ fontSize: 12, color: "#8a8891" }}>+ {inputs.aiFailureBuffer}% failure buffer</span>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#a855f7", fontFamily: "Space Mono, monospace" }}>
+                    <span style={{ fontSize: 12, color: "#C9C1D6" }}>+ {inputs.aiFailureBuffer}% failure buffer</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#794EC2", fontFamily: "Inter, sans-serif" }}>
                       {fmtCurD(results.aiCostPerMin, 4)}/min
                     </span>
                   </div>
@@ -2092,32 +2104,32 @@ export default function Calculator() {
                 {/* Per-call costs */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <Card>
-                    <div style={{ fontSize: 12, color: "#6b6878", marginBottom: 14, fontWeight: 600 }}>Per-Call AI Economics</div>
+                    <div style={{ fontSize: 12, color: "#C9C1D6", marginBottom: 14, fontWeight: 600 }}>Per-Call AI Economics</div>
                     {[
-                      { label: `AI cost / ${inputs.aht}-min call`, value: fmtCurD(results.aiCostPerMin * inputs.aht, 3), color: "#a855f7" },
-                      { label: "AI cost / resolved contact", value: fmtCurD(results.s3AIMonthlyCost / (results.s3AIHandledCalls || 1), 3), color: "#8b5cf6" },
-                      { label: "Human cost / contact (trad)", value: fmtCurD(results.cprc.preTraditional, 2), color: "#ef4444" },
-                      { label: "Human cost / contact (gig)", value: fmtCurD(results.cprc.preGig, 2), color: "#f59e0b" },
-                      { label: "AI + gig blended / contact", value: fmtCurD(results.cprc.postGig, 2), color: "#22c55e" },
+                      { label: `AI cost / ${inputs.aht}-min call`, value: fmtCurD(results.aiCostPerMin * inputs.aht, 3), color: "#794EC2" },
+                      { label: "AI cost / resolved contact", value: fmtCurD(results.s3AIMonthlyCost / (results.s3AIHandledCalls || 1), 3), color: "#8F68D3" },
+                      { label: "Human cost / contact (trad)", value: fmtCurD(results.cprc.preTraditional, 2), color: "#FF66C4" },
+                      { label: "Human cost / contact (gig)", value: fmtCurD(results.cprc.preGig, 2), color: "#FFE566" },
+                      { label: "AI + gig blended / contact", value: fmtCurD(results.cprc.postGig, 2), color: "#FF7866" },
                     ].map(({ label, value, color }) => (
                       <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
-                        <span style={{ fontSize: 11, color: "#6b6878" }}>{label}</span>
-                        <span style={{ fontSize: 15, fontWeight: 700, color, fontFamily: "Space Mono, monospace" }}>{value}</span>
+                        <span style={{ fontSize: 11, color: "#C9C1D6" }}>{label}</span>
+                        <span style={{ fontSize: 15, fontWeight: 700, color, fontFamily: "Inter, sans-serif" }}>{value}</span>
                       </div>
                     ))}
                   </Card>
                   <Card>
-                    <div style={{ fontSize: 12, color: "#6b6878", marginBottom: 14, fontWeight: 600 }}>Monthly AI Cost Roll-up</div>
+                    <div style={{ fontSize: 12, color: "#C9C1D6", marginBottom: 14, fontWeight: 600 }}>Monthly AI Cost Roll-up</div>
                     {[
-                      { label: "AI-handled calls", value: fmt(results.s3AIHandledCalls), color: "#a855f7" },
-                      { label: "AI-handled minutes", value: fmt(results.s3AIHandledCalls * inputs.aht), color: "#8b5cf6" },
-                      { label: "Total AI cost/month", value: fmtCur(results.s3AIMonthlyCost), color: "#a855f7" },
-                      { label: "As % of total cost (ShyftOff)", value: `${fmtD(results.s3AIMonthlyCost / (results.postGig || 1) * 100, 1)}%`, color: "#6366f1" },
-                      { label: "Containment rate", value: `${Math.round(inputs.containmentRate * 100)}%`, color: "#06b6d4" },
+                      { label: "AI-handled calls", value: fmt(results.s3AIHandledCalls), color: "#794EC2" },
+                      { label: "AI-handled minutes", value: fmt(results.s3AIHandledCalls * inputs.aht), color: "#8F68D3" },
+                      { label: "Total AI cost/month", value: fmtCur(results.s3AIMonthlyCost), color: "#794EC2" },
+                      { label: "As % of total cost (ShyftOff)", value: `${fmtD(results.s3AIMonthlyCost / (results.postGig || 1) * 100, 1)}%`, color: "#8F68D3" },
+                      { label: "Containment rate", value: `${Math.round(inputs.containmentRate * 100)}%`, color: "#8F68D3" },
                     ].map(({ label, value, color }) => (
                       <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
-                        <span style={{ fontSize: 11, color: "#6b6878" }}>{label}</span>
-                        <span style={{ fontSize: 15, fontWeight: 700, color, fontFamily: "Space Mono, monospace" }}>{value}</span>
+                        <span style={{ fontSize: 11, color: "#C9C1D6" }}>{label}</span>
+                        <span style={{ fontSize: 15, fontWeight: 700, color, fontFamily: "Inter, sans-serif" }}>{value}</span>
                       </div>
                     ))}
                   </Card>
@@ -2128,7 +2140,7 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     Market Rate Benchmarks
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                     Where your configured rate lands vs. industry pricing tiers
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
@@ -2136,8 +2148,8 @@ export default function Calculator() {
                       const active = selectedTier === key;
                       return (
                         <div key={key} onClick={() => applyPreset(key)} style={{
-                          background: active ? "#1a1228" : "#0d0e14",
-                          border: `1px solid ${active ? preset.color : "#1e1f2e"}`,
+                          background: active ? "#3D2050" : "#2E1740",
+                          border: `1px solid ${active ? preset.color : "#4D1F3B"}`,
                           borderRadius: 8, padding: "14px 14px", cursor: "pointer",
                           transition: "all 0.15s",
                           boxShadow: active ? `0 0 16px ${preset.color}22` : "none",
@@ -2145,11 +2157,11 @@ export default function Calculator() {
                           <div style={{ fontSize: 11, fontWeight: 700, color: preset.color, marginBottom: 4 }}>
                             {preset.label}
                           </div>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontFamily: "Space Mono, monospace", marginBottom: 6 }}>
-                            {preset.range}<span style={{ fontSize: 10, color: "#4a4855" }}>/min</span>
+                          <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontFamily: "Inter, sans-serif", marginBottom: 6 }}>
+                            {preset.range}<span style={{ fontSize: 10, color: "#9B7FB5" }}>/min</span>
                           </div>
-                          <div style={{ fontSize: 11, color: "#6b6878", lineHeight: 1.5 }}>{preset.desc}</div>
-                          <div style={{ marginTop: 10, fontSize: 10, color: "#4a4855" }}>{preset.vendors}</div>
+                          <div style={{ fontSize: 11, color: "#C9C1D6", lineHeight: 1.5 }}>{preset.desc}</div>
+                          <div style={{ marginTop: 10, fontSize: 10, color: "#9B7FB5" }}>{preset.vendors}</div>
                           {active && (
                             <div style={{
                               marginTop: 10, display: "inline-flex", alignItems: "center", gap: 5,
@@ -2160,7 +2172,7 @@ export default function Calculator() {
                             </div>
                           )}
                           {!active && (
-                            <div style={{ marginTop: 10, fontSize: 10, color: "#4a4855" }}>
+                            <div style={{ marginTop: 10, fontSize: 10, color: "#9B7FB5" }}>
                               Click to apply →
                             </div>
                           )}
@@ -2185,21 +2197,21 @@ export default function Calculator() {
 
                 {/* Hero metric */}
                 <div style={{
-                  background: "linear-gradient(135deg, #1a1228 0%, #0f0a1e 100%)",
-                  border: "1px solid #a855f7", borderRadius: 14,
+                  background: "linear-gradient(135deg, #3D2050 0%, #1F0E2F 100%)",
+                  border: "1px solid #794EC2", borderRadius: 14,
                   padding: "28px 32px", textAlign: "center",
                   boxShadow: "0 0 40px rgba(168,85,247,0.12)",
                 }}>
-                  <div style={{ fontSize: 12, color: "#8a8891", marginBottom: 8, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 12, color: "#C9C1D6", marginBottom: 8, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                     {showAI ? "Annual savings vs. Traditional (no AI)" : "Annual savings vs. Traditional"}
                   </div>
-                  <div style={{ fontSize: 56, fontWeight: 900, color: "#22c55e", fontFamily: "Space Mono, monospace", lineHeight: 1 }}>
+                  <div style={{ fontSize: 56, fontWeight: 900, color: "#FF7866", fontFamily: "Inter, sans-serif", lineHeight: 1 }}>
                     {fmtCur(heroSavings)}
                   </div>
-                  <div style={{ fontSize: 16, color: "#a855f7", marginTop: 8, fontWeight: 600 }}>
+                  <div style={{ fontSize: 16, color: "#794EC2", marginTop: 8, fontWeight: 600 }}>
                     {fmtD(heroPct * 100, 1)}% reduction in total contact center cost
                   </div>
-                  <div style={{ fontSize: 12, color: "#4a4855", marginTop: 6 }}>
+                  <div style={{ fontSize: 12, color: "#9B7FB5", marginTop: 6 }}>
                     {showAI
                       ? "ShyftOff + AI vs. Traditional with no automation"
                       : "ShyftOff vs. Traditional contact center staffing"}
@@ -2211,7 +2223,7 @@ export default function Calculator() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 4 }}>
                     Where the Savings Come From
                   </div>
-                  <div style={{ fontSize: 11, color: "#6b6878", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "#C9C1D6", marginBottom: 16 }}>
                     {showAI
                       ? "Monthly cost waterfall: baseline → gig savings → AI savings → total"
                       : "Monthly cost waterfall: traditional baseline → gig savings → total"}
@@ -2219,28 +2231,28 @@ export default function Calculator() {
                   {(() => {
                     const gigSavings = results.preTraditional - results.preGig;
                     const steps = showAI ? [
-                      { label: "Traditional (no AI)", value: results.preTraditional, type: "base", color: "#ef4444" },
-                      { label: "ShyftOff flexibility savings", value: -gigSavings, type: "save", color: "#22c55e" },
-                      { label: "AI containment savings", value: -(results.preGig - results.s4.gigCost), type: "save", color: "#a855f7" },
-                      { label: "AI infrastructure cost", value: results.s3AIMonthlyCost, type: "cost", color: "#f59e0b" },
-                      { label: "ShyftOff + AI (total)", value: results.postGig, type: "total", color: "#22c55e" },
+                      { label: "Traditional (no AI)", value: results.preTraditional, type: "base", color: "#FF66C4" },
+                      { label: "ShyftOff flexibility savings", value: -gigSavings, type: "save", color: "#FF7866" },
+                      { label: "AI containment savings", value: -(results.preGig - results.s4.gigCost), type: "save", color: "#794EC2" },
+                      { label: "AI infrastructure cost", value: results.s3AIMonthlyCost, type: "cost", color: "#FFE566" },
+                      { label: "ShyftOff + AI (total)", value: results.postGig, type: "total", color: "#FF7866" },
                     ] : [
-                      { label: "Traditional", value: results.preTraditional, type: "base", color: "#ef4444" },
-                      { label: "ShyftOff flexibility savings", value: -gigSavings, type: "save", color: "#22c55e" },
-                      { label: "ShyftOff (total)", value: results.preGig, type: "total", color: "#22c55e" },
+                      { label: "Traditional", value: results.preTraditional, type: "base", color: "#FF66C4" },
+                      { label: "ShyftOff flexibility savings", value: -gigSavings, type: "save", color: "#FF7866" },
+                      { label: "ShyftOff (total)", value: results.preGig, type: "total", color: "#FF7866" },
                     ];
                     return steps.map(({ label, value, type, color }) => (
                       <div key={label} style={{ marginBottom: 12 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-                          <span style={{ fontSize: 12, color: "#8a8891" }}>{label}</span>
+                          <span style={{ fontSize: 12, color: "#C9C1D6" }}>{label}</span>
                           <span style={{
-                            fontSize: 13, fontWeight: 700, fontFamily: "Space Mono, monospace",
-                            color: type === "save" ? "#22c55e" : type === "cost" ? "#f59e0b" : color,
+                            fontSize: 13, fontWeight: 700, fontFamily: "Inter, sans-serif",
+                            color: type === "save" ? "#FF7866" : type === "cost" ? "#FFE566" : color,
                           }}>
                             {type === "save" ? "−" : type === "cost" ? "+" : ""}{fmtCur(Math.abs(value))}
                           </span>
                         </div>
-                        <div style={{ height: 10, background: "#1e1f2e", borderRadius: 5, overflow: "hidden" }}>
+                        <div style={{ height: 10, background: "#4D1F3B", borderRadius: 5, overflow: "hidden" }}>
                           <div style={{
                             width: `${Math.min(Math.abs(value) / results.preTraditional * 100, 100)}%`,
                             height: "100%", background: color, borderRadius: 5, transition: "width 0.4s",
@@ -2277,8 +2289,8 @@ export default function Calculator() {
                       ["Arrival pattern", ARRIVAL_PRESETS[arrivalKey].label],
                     ]).map(([k, v]) => (
                       <div key={k} style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
-                        <span style={{ fontSize: 11, color: "#6b6878" }}>{k}</span>
-                        <span style={{ fontSize: 11, color: "#e2e0e7", fontFamily: "Space Mono, monospace" }}>{v}</span>
+                        <span style={{ fontSize: 11, color: "#C9C1D6" }}>{k}</span>
+                        <span style={{ fontSize: 11, color: "#FFFFFF", fontFamily: "Inter, sans-serif" }}>{v}</span>
                       </div>
                     ))}
                   </Card>
@@ -2296,8 +2308,8 @@ export default function Calculator() {
                       { point: "Higher-caliber agents", desc: "ShyftOff's model attracts experienced workers without the high turnover of traditional contact center centers." },
                     ]).map(({ point, desc }) => (
                       <div key={point} style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: "#a855f7", marginBottom: 2 }}>{point}</div>
-                        <div style={{ fontSize: 11, color: "#6b6878", lineHeight: 1.5 }}>{desc}</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#794EC2", marginBottom: 2 }}>{point}</div>
+                        <div style={{ fontSize: 11, color: "#C9C1D6", lineHeight: 1.5 }}>{desc}</div>
                       </div>
                     ))}
                   </Card>
@@ -2305,8 +2317,8 @@ export default function Calculator() {
 
                 {/* CTA */}
                 <div style={{
-                  background: "linear-gradient(135deg, #1a1228 0%, #160d24 100%)",
-                  border: "1px solid #a855f7", borderRadius: 12, padding: "24px 28px",
+                  background: "linear-gradient(135deg, #3D2050 0%, #2E1740 100%)",
+                  border: "1px solid #794EC2", borderRadius: 12, padding: "24px 28px",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   gap: 20,
                 }}>
@@ -2314,7 +2326,7 @@ export default function Calculator() {
                     <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 6 }}>
                       Ready to capture {fmtCur(heroSavings)} in annual savings?
                     </div>
-                    <div style={{ fontSize: 13, color: "#8a8891" }}>
+                    <div style={{ fontSize: 13, color: "#C9C1D6" }}>
                       {showAI
                         ? "ShyftOff provides the flexible gig workforce that makes AI economics work. Talk to our team about your deployment strategy."
                         : "ShyftOff is the flexible alternative to traditional contact center staffing. Talk to our team about your contact center."}
@@ -2322,7 +2334,7 @@ export default function Calculator() {
                   </div>
                   <div style={{ flexShrink: 0 }}>
                     <div style={{
-                      background: "#a855f7", color: "#fff", borderRadius: 8,
+                      background: "#794EC2", color: "#fff", borderRadius: 8,
                       padding: "12px 24px", fontSize: 14, fontWeight: 700,
                       cursor: "pointer", textAlign: "center", whiteSpace: "nowrap",
                     }}>

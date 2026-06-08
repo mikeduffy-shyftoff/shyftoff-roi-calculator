@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0a0b0f; }
+body {
+  background: #27133A; /* Deep Purple — ShyftOff brand */
+  font-family: 'Inter', Arial, sans-serif;
+}
 
 /* Responsive overrides — the calculator uses inline styles, so we use
    !important here to win specificity below the 768px breakpoint. */
@@ -10,7 +15,7 @@ body { background: #0a0b0f; }
   }
   .calc-inputs {
     border-right: none !important;
-    border-bottom: 1px solid #1e1f2e !important;
+    border-bottom: 1px solid #4D1F3B !important;
     max-height: none !important;
   }
   .calc-header {
