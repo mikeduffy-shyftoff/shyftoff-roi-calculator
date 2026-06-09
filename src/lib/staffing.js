@@ -3,6 +3,8 @@ import {
   findRequiredAgentsByOcc,
   findNaturalMaxOcc,
   serviceLevel,
+  findRequiredAgentsErlangA,
+  serviceLevelErlangA,
 } from "./erlang.js";
 
 // Greedy shift-block solver: replicates the v15 WFM model. Traditional centers
@@ -313,6 +315,13 @@ export function computeIntervalStaffing({
   // pre-AI baseline. scenarios.js auto-derives this from cvUplift so higher
   // containment produces a visibly choppier curve.
   volatilityNoise = 0,
+  // Queueing model: "erlangC" (infinite patience, classic) or "erlangA"
+  // (exponential abandonment). Erlang A typically requires fewer agents to
+  // hit the same SL because impatient callers shorten the queue. beta is the
+  // patience ratio θ × AHT (β = AHT / mean patience). beta = 0 is identical
+  // to Erlang C for all outputs.
+  queueModel = "erlangC",
+  beta = 0,
 }) {
   const ahtSec = ahtMins * 60;
   const active =
@@ -349,24 +358,27 @@ export function computeIntervalStaffing({
       : 1;
     const calls = baseCalls * noiseFactor;
     const erlangs = calls * 2 * (ahtSec / 3600);
+    const useErlangA = queueModel === "erlangA";
     const req = prioritizeOcc
       ? findRequiredAgentsByOcc(erlangs, maxOcc)
-      : findRequiredAgents(erlangs, ahtSec, targetSL, targetSeconds, maxOcc);
+      : useErlangA
+        ? findRequiredAgentsErlangA(erlangs, ahtSec, targetSL, targetSeconds, maxOcc, beta)
+        : findRequiredAgents(erlangs, ahtSec, targetSL, targetSeconds, maxOcc);
     // Compute the achieved SL at this staffing level. In dual-constraint mode
     // this is always >= targetSL by construction. In occ-only mode it may
     // drop below — that's the warning condition the calculator surfaces.
     const achievedSL =
-      erlangs > 0 ? serviceLevel(req, erlangs, ahtSec, targetSeconds) : 1;
+      erlangs > 0
+        ? (useErlangA
+            ? serviceLevelErlangA(req, erlangs, beta, ahtSec, targetSeconds)
+            : serviceLevel(req, erlangs, ahtSec, targetSeconds))
+        : 1;
     if (erlangs > 0) {
       if (achievedSL < minAchievedSL) minAchievedSL = achievedSL;
       // sl_floor with no occ cap = the "pure SL" agent count for this interval.
-      const slFloor = findRequiredAgents(
-        erlangs,
-        ahtSec,
-        targetSL,
-        targetSeconds,
-        0.999,
-      );
+      const slFloor = useErlangA
+        ? findRequiredAgentsErlangA(erlangs, ahtSec, targetSL, targetSeconds, 0.999, beta)
+        : findRequiredAgents(erlangs, ahtSec, targetSL, targetSeconds, 0.999);
       const ivUpper = slFloor > 1 ? erlangs / (slFloor - 1) - 1e-9 : 0.95;
       // Accumulate call-weighted contributions. Intervals with more calls
       // dominate; quiet intervals contribute little.
@@ -374,7 +386,11 @@ export function computeIntervalStaffing({
       weightedSLNum += achievedSL * calls;
       weightedCallsDen += calls;
     }
-    const sched = Math.ceil(req / (1 - shrinkage));
+    // Guard against shrinkage = 1.0 (everyone is on break) — caller can land
+    // here from a stress-test slider; treat as a tiny epsilon so the schedule
+    // is huge-but-finite instead of Infinity.
+    const productionFrac = Math.max(0.01, 1 - shrinkage);
+    const sched = Math.ceil(req / productionFrac);
     totalRequired += req;
     totalScheduled += sched;
     peak = Math.max(peak, sched);

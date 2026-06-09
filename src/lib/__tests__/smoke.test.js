@@ -3,6 +3,9 @@ import {
   erlangC,
   serviceLevel,
   findRequiredAgents,
+  erlangA,
+  serviceLevelErlangA,
+  findRequiredAgentsErlangA,
 } from "../erlang.js";
 import { SINGLE_PEAK, CAMEL, BELL, DEFAULT_DOW } from "../arrivalCurves.js";
 import { computeIntervalStaffing, solveShiftBlocks } from "../staffing.js";
@@ -37,6 +40,63 @@ describe("erlang", () => {
     expect(findRequiredAgents(30, 300, 0.8, 20, 0.85)).toBe(36);
   });
 
+});
+
+describe("erlang A — abandonment-aware queueing", () => {
+  // Sanity: at β = 0 (infinite patience), Erlang A's pWait must equal Erlang C.
+  it("β = 0 reduces to Erlang C", () => {
+    const c = 5, a = 3;
+    const { pWait } = erlangA(c, a, 0);
+    expect(pWait).toBeCloseTo(erlangC(c, a), 6);
+  });
+
+  // Brown et al. (2005) result: Erlang A predicts fewer required agents than
+  // Erlang C at the same SL target because abandonment relieves the queue.
+  // Use 30 erlangs, 80/20 SL, AHT 300s, max occ 0.85, β = 1 (patience = AHT).
+  it("Erlang A requires no more agents than Erlang C at moderate β", () => {
+    const erlangCReq = findRequiredAgents(30, 300, 0.8, 20, 0.85);
+    const erlangAReq = findRequiredAgentsErlangA(30, 300, 0.8, 20, 0.85, 1);
+    // Erlang A should need ≤ Erlang C; the gap widens at higher β.
+    expect(erlangAReq).toBeLessThanOrEqual(erlangCReq);
+  });
+
+  // Abandonment rate monotone in β: more impatient callers ⇒ more abandon.
+  it("pAbandon monotone increasing in β at fixed staffing", () => {
+    const c = 8, a = 7.5;
+    const a1 = erlangA(c, a, 0.5).pAbandon;
+    const a2 = erlangA(c, a, 1.0).pAbandon;
+    const a3 = erlangA(c, a, 2.0).pAbandon;
+    expect(a2).toBeGreaterThanOrEqual(a1);
+    expect(a3).toBeGreaterThanOrEqual(a2);
+  });
+
+  // Service-level interpretation: at staffing N satisfying Erlang C 80/20,
+  // serviceLevelErlangA at β=1 should match or exceed (abandonment helps SL
+  // under the strict convention where abandoned counts as not-answered, the
+  // queue still drains faster).
+  it("serviceLevelErlangA ≥ serviceLevel (Erlang C) at same staffing", () => {
+    const c = 36, a = 30, ahtSec = 300, targetSec = 20;
+    const slC = serviceLevel(c, a, ahtSec, targetSec);
+    const slA = serviceLevelErlangA(c, a, 1, ahtSec, targetSec);
+    expect(slA).toBeGreaterThanOrEqual(slC - 1e-9);
+  });
+
+  // Stability: traffic > agents (ρ > 1) is fine for Erlang A because of
+  // abandonment. Erlang C diverges; Erlang A produces a finite queue.
+  it("handles ρ > 1 gracefully with abandonment", () => {
+    const result = erlangA(5, 7, 1); // 7 erlangs offered to 5 agents
+    expect(result.pAbandon).toBeGreaterThan(0);
+    expect(result.pAbandon).toBeLessThan(1);
+    expect(Number.isFinite(result.expectedQueue)).toBe(true);
+  });
+
+  // Zero traffic edge case: no calls means no abandonment, no wait.
+  it("zero traffic returns clean zeros", () => {
+    const r = erlangA(5, 0, 1);
+    expect(r.pWait).toBe(0);
+    expect(r.pAbandon).toBe(0);
+    expect(r.expectedQueue).toBe(0);
+  });
 });
 
 describe("arrival curves", () => {

@@ -1,6 +1,15 @@
 import { computeIntervalStaffing, solveShiftBlocks, computeOnPhones } from "./staffing.js";
-import { serviceLevel } from "./erlang.js";
+import { serviceLevel, serviceLevelErlangA } from "./erlang.js";
 import { lognormalConditionalMean } from "./distribution.js";
+
+// Pick the SL formula matching the active queueing model. Erlang A factors
+// abandonment into the wait-time distribution; using the wrong formula in
+// K-calibration would mismatch the user-facing achievedSL display.
+function slForModel(queueModel, beta, agents, erlangs, ahtSec, targetSec) {
+  return queueModel === "erlangA"
+    ? serviceLevelErlangA(agents, erlangs, beta, ahtSec, targetSec)
+    : serviceLevel(agents, erlangs, ahtSec, targetSec);
+}
 
 const WEEKS_PER_MONTH = 4.33;
 
@@ -28,6 +37,11 @@ export function computeScenarioCost({
   targetSeconds,
   maxOcc,
   shrinkage,
+  // Fraction of total shrinkage that is in-center (breaks, coaching, system).
+  // Default 0.60 matches the historic 21/14 split. Caller can override with
+  // the user's actual In-Center / Out-of-Center inputs so the chart and cost
+  // computations agree. Out-of-center = 1 − this.
+  inCenterShrinkRatio = 0.60,
   shiftLength,
   influxTarget = 1.2,
   traditionalRate,
@@ -72,6 +86,12 @@ export function computeScenarioCost({
   // warning. The calculator passes true and auto-positions its maxOcc slider
   // at naturalMaxOcc (the sweet spot where SL just meets target).
   prioritizeOcc = false,
+  // Queueing model — "erlangC" (infinite patience) or "erlangA" (exponential
+  // abandonment). Erlang A is the modern contact-center standard; Erlang C
+  // overstaffs by 20–30% at peak per Brown et al. (2005). Beta is the impatience
+  // ratio θ × AHT = AHT / mean patience. β = 0 ⟹ Erlang C identically.
+  queueModel = "erlangC",
+  beta = 0,
 }) {
   const contained = aiEnabled ? monthlyVolume * containmentRate : 0;
   const escalated = aiEnabled ? contained * escalationRate : 0;
@@ -143,8 +163,11 @@ export function computeScenarioCost({
   // SL, >1 = over-provision.
   let calibrationK = 1.0;
   const ahtSec = humanAHT * 60;
-  const inCenter = shrinkage * 0.60;
-  const outOfCenter = shrinkage * 0.40;
+  // Honor the caller's actual in-center / out-of-center split. The default
+  // 0.60/0.40 stays for back-compat with callers that don't pass the ratio.
+  const inCenterRatio = Math.min(1, Math.max(0, inCenterShrinkRatio));
+  const inCenter = shrinkage * inCenterRatio;
+  const outOfCenter = shrinkage * (1 - inCenterRatio);
   if (dowEntries.length > 0) {
     const peakEntry = dowEntries.reduce(
       (max, e) => (e[1] > max[1] ? e : max),
@@ -168,6 +191,8 @@ export function computeScenarioCost({
         shrinkage,
         prioritizeOcc,
         volatilityNoise,
+        queueModel,
+        beta,
       });
       // Step 2: compute calibration intervals at maxOcc = refNatural. The K
       // we find here is the geometry buffer relative to "SL-meeting" staffing.
@@ -183,9 +208,15 @@ export function computeScenarioCost({
         shrinkage,
         prioritizeOcc,
         volatilityNoise,
+        queueModel,
+        beta,
       });
       const cRequired = cIntervals.map((iv) => iv.required);
-      let lo = 0.5;
+      // K is the shift-geometry gross-up factor. Floor at 1.0 so a light load
+      // (SL already met at nominal staffing) doesn't drive 'coverage = 100%'
+      // to under-staff at K = 0.5 of nominal. Ceiling at 2.5 prevents runaway
+      // scheduling on extreme shrinkage. Width binary-searched in 12 passes.
+      let lo = 1.0;
       let hi = 2.5;
       for (let it = 0; it < 12; it++) {
         const mid = (lo + hi) / 2;
@@ -205,7 +236,7 @@ export function computeScenarioCost({
           if (iv.calls <= 0 || iv.erlangs <= 0) continue;
           const sl =
             op[j] > 0
-              ? serviceLevel(op[j], iv.erlangs, ahtSec, targetSeconds)
+              ? slForModel(queueModel, beta, op[j], iv.erlangs, ahtSec, targetSeconds)
               : 0;
           slSum += sl * iv.calls;
           cSum += iv.calls;
@@ -247,6 +278,8 @@ export function computeScenarioCost({
       shrinkage,
       prioritizeOcc,
       volatilityNoise,
+      queueModel,
+      beta,
     });
     const {
       dailyShiftHours,
@@ -286,7 +319,7 @@ export function computeScenarioCost({
       if (iv.calls <= 0 || iv.erlangs <= 0) continue;
       const effOnPhones = dayOnPhones[i] || 0;
       const sl = effOnPhones > 0
-        ? serviceLevel(effOnPhones, iv.erlangs, ahtSec, targetSeconds)
+        ? slForModel(queueModel, beta, effOnPhones, iv.erlangs, ahtSec, targetSeconds)
         : 0;
       dayDeliveredSLNum += sl * iv.calls;
       dayDeliveredCalls += iv.calls;
@@ -346,13 +379,16 @@ export function computeScenarioCost({
   const openDaysPerWeek = dowEntries.filter(([, v]) => v > 0).length;
   const workDaysPerMonth = openDaysPerWeek * WEEKS_PER_MONTH;
 
-  const supCount = Number.isFinite(agentsPerSup)
+  // Phantom-support-cost guard: when peakTradAgents = 0 (closed center,
+  // 100% containment stress test, all-zero DOW), don't synthesize a manager
+  // and a WFM lead out of thin air. Zero agents → zero overhead headcount.
+  const supCount = peakTradAgents > 0 && Number.isFinite(agentsPerSup)
     ? Math.max(1, Math.ceil(peakTradAgents / agentsPerSup))
     : 0;
-  const mgrCount = Number.isFinite(agentsPerMgr)
+  const mgrCount = peakTradAgents > 0 && Number.isFinite(agentsPerMgr)
     ? Math.max(1, Math.ceil(peakTradAgents / agentsPerMgr))
     : 0;
-  const wfmCount = Number.isFinite(agentsPerWfm)
+  const wfmCount = peakTradAgents > 0 && Number.isFinite(agentsPerWfm)
     ? Math.max(1, Math.ceil(peakTradAgents / agentsPerWfm))
     : 0;
   const supportCostMonthly =

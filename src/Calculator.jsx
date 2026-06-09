@@ -251,6 +251,14 @@ export default function Calculator() {
     outOfCenterShrink: 14, // training, vacation, sick/FMLA (agent absent from floor)
     serviceLevelTarget: 80,
     serviceLevelThreshold: 20,
+    // Queue model: 'erlangC' (no abandonment, industry-classic, overstaffs
+    // by 20–30% at peak per Brown 2005) or 'erlangA' (exponential patience,
+    // modern WFM standard). Default A — more realistic, demo lands closer
+    // to what production WFM tools (Verint/NICE) actually produce.
+    queueModel: "erlangA",
+    // Mean caller patience in seconds. Industry voice typical 60–120s; chat
+    // tolerates much longer. Used only when queueModel === 'erlangA'.
+    patienceSec: 90,
     maxOccupancy: naturalPct,
     traditionalRate: 18,
     benefitsMultiplier: 35,
@@ -328,11 +336,22 @@ export default function Calculator() {
       containmentRate, escalationRate, postAiWagePremium,
       dowMon, dowTue, dowWed, dowThu, dowFri, dowSat, dowSun,
       aiSIP, aiSTT, aiLLM, aiTTS, aiOrchestration, aiCompliance, aiFailureBuffer,
+      queueModel, patienceSec, aht: ahtInputMin,
     } = inputs;
+    // Erlang A impatience ratio: β = AHT / mean patience (both in seconds).
+    // β = 0 when Erlang C is selected (no abandonment).
+    const beta = queueModel === "erlangA" && patienceSec > 0
+      ? (ahtInputMin * 60) / patienceSec
+      : 0;
 
     const targetSL = serviceLevelTarget / 100;
     const maxOcc = maxOccupancy / 100;
     const shrink = (inCenterShrink + outOfCenterShrink) / 100;
+    // Honor the user's actual in/out split (lib previously hardcoded 60/40).
+    const inCenterRatio =
+      (inCenterShrink + outOfCenterShrink) > 0
+        ? inCenterShrink / (inCenterShrink + outOfCenterShrink)
+        : 0.6;
 
     const aiCostBase = aiSIP + aiSTT + aiLLM + aiTTS + aiOrchestration + aiCompliance;
     const aiCostPerMin = aiCostBase * (1 + aiFailureBuffer / 100);
@@ -345,6 +364,8 @@ export default function Calculator() {
       arrivalCurve,
       startHour, endHour, dow, gigTiers, targetSL,
       targetSeconds: serviceLevelThreshold, maxOcc, shrinkage: shrink,
+      inCenterShrinkRatio: inCenterRatio,
+      queueModel, beta,
       traditionalRate, benefitsMultiplier, shiftLength,
       influxTarget: influxTarget / 100,
       agentsPerSup, agentsPerMgr, agentsPerWfm,
@@ -748,6 +769,51 @@ export default function Calculator() {
               <NumInput value={inputs.serviceLevelThreshold} onChange={(v) => set("serviceLevelThreshold", v)} min={5} max={120} suffix="sec" />
             </InputRow>
           </div>
+
+          {/* Queue model selector — Erlang A is the modern WFM standard
+              (abandonment-aware); Erlang C is the classic infinite-patience
+              model. Brown et al. (2005) showed Erlang C overstaffs by 20-30%
+              at peak in real call centers. */}
+          <InputRow label="Queue Model" tooltip="Erlang A models exponentially-distributed caller patience and is the modern WFM standard (Verint, NICE). Erlang C assumes infinite patience and overstaffs by 20–30% at peak per Brown et al. (2005), 'Statistical analysis of a telephone call center.' Both are supported — switch to see the difference.">
+            <div style={{
+              display: "inline-flex", background: "#1F0E2F", border: "1px solid #5D2F4B",
+              borderRadius: 6, padding: 2, width: "100%",
+            }}>
+              {[
+                { id: "erlangA", label: "Erlang A", hint: "with abandonment" },
+                { id: "erlangC", label: "Erlang C", hint: "no abandonment" },
+              ].map((m) => {
+                const active = inputs.queueModel === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => set("queueModel", m.id)}
+                    style={{
+                      flex: 1, background: active ? "#3D2050" : "transparent",
+                      border: active ? "1px solid #794EC2" : "1px solid transparent",
+                      color: active ? "#794EC2" : "#C9C1D6",
+                      borderRadius: 4, padding: "6px 8px", fontSize: 11, fontWeight: 600,
+                      cursor: "pointer", fontFamily: "'Inter', sans-serif",
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                    }}
+                  >
+                    <span>{m.label}</span>
+                    <span style={{ fontSize: 9, color: active ? "#C9C1D6" : "#7A5A8E", fontWeight: 400 }}>
+                      {m.hint}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </InputRow>
+
+          {/* Mean patience — only when Erlang A is active. Default 90s reflects
+              voice contact-center norms. Chat tolerates much longer. */}
+          {inputs.queueModel === "erlangA" && (
+            <InputRow label="Mean Caller Patience" hint="seconds before abandon · voice typical: 60–120s" tooltip="Average time a caller waits before hanging up. Modeled as exponential. Industry voice: 60–120s. Chat/async: 5–30 min. Lower patience ⇒ more abandonment ⇒ Erlang A predicts fewer agents needed to hit your SL target.">
+              <NumInput value={inputs.patienceSec} onChange={(v) => set("patienceSec", v)} min={10} max={900} step={5} suffix="sec" />
+            </InputRow>
+          )}
           {showAdvanced && (
           <InputRow label="Optimal Occupancy" tooltip="Max % of paid time agents spend on calls. Above ~85% you trade SL for cost — queue times spike, burnout and attrition follow. The slider auto-defaults to the highest occupancy that still meets your SL target; push it higher and you'll see a silent SL warning.">
             {/* Floating % bubble above the slider, positioned over the thumb. */}
